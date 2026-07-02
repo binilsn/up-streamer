@@ -19,16 +19,7 @@ class Api::V1::LogsController < ApplicationController
 
   # GET /api/v1/logs
   def index
-    logs = Log.recent
-
-    logs = logs.by_level(params[:level]) if params[:level].present?
-    logs = logs.by_levels(params[:levels].split(",")) if params[:levels].present?
-    logs = logs.by_service(params[:service]) if params[:service].present?
-    logs = logs.by_hostname(params[:hostname]) if params[:hostname].present?
-    logs = logs.by_error_code(params[:error_code]) if params[:error_code].present?
-    logs = logs.search_message(params[:q]) if params[:q].present?
-    logs = logs.since(params[:from]) if params[:from].present?
-    logs = logs.until(params[:to]) if params[:to].present?
+    logs = LogQuery.new(Log.recent, params).call
 
     page = (params[:page] || 1).to_i
     per_page = [ (params[:per_page] || DEFAULT_PER_PAGE).to_i, MAX_PER_PAGE ].min

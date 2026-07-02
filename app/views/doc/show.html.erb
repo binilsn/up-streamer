@@ -108,18 +108,3 @@
   -H "Authorization: Bearer &lt;your_access_token&gt;"</pre>
   </div>
 </div>
-
-<script>
-  function copyToClipboard(elementId, button) {
-    var text = document.getElementById(elementId).textContent
-    navigator.clipboard.writeText(text).then(function() {
-      var icon = button.querySelector('.material-symbols-outlined')
-      if (icon) {
-        icon.textContent = 'check'
-        setTimeout(function() {
-          icon.textContent = 'content_copy'
-        }, 1500)
-      }
-    })
-  }
-</script>
