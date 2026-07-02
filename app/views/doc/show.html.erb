@@ -1,0 +1,125 @@
+<% api_base = "#{request.base_url}/api/v1" %>
+
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-6">
+  <div>
+    <h2 class="font-headline text-[28px] font-bold tracking-tight text-on-surface">API Reference</h2>
+    <p class="font-body text-[14px] text-on-surface-variant mt-1">Documentation for ingesting logs from external services</p>
+  </div>
+</div>
+
+<!-- API Reference -->
+<div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
+  <div class="mb-6">
+    <h4 class="font-body text-[13px] font-semibold text-on-surface mb-2">API Base URL</h4>
+    <div class="flex items-center gap-2">
+      <code id="api-base-url" class="font-code text-[13px] bg-surface-container px-3 py-2 rounded text-on-surface-variant"><%= api_base %></code>
+      <button onclick="copyToClipboard('api-base-url', this)" class="p-1.5 hover:bg-surface-container rounded transition-colors" title="Copy URL">
+        <span class="material-symbols-outlined text-[18px] text-on-surface-variant pointer-events-none">content_copy</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Authentication -->
+  <div class="mb-6">
+    <h4 class="font-body text-[14px] font-semibold text-on-surface mb-2">Authentication</h4>
+    <p class="font-body text-[13px] text-on-surface-variant mb-2">All API requests require a Bearer token in the Authorization header. Generate a token from the <a href="<%= services_path %>" class="text-secondary hover:text-secondary-container underline">Services</a> page.</p>
+    <pre class="bg-surface-container rounded-lg p-4 font-code text-[13px] text-on-surface overflow-x-auto">Authorization: Bearer &lt;your_access_token&gt;</pre>
+  </div>
+
+  <!-- Ingest Log -->
+  <div class="mb-6">
+    <h4 class="font-body text-[14px] font-semibold text-on-surface mb-2">
+      <span class="px-2 py-0.5 bg-green-100 text-green-700 font-body text-[11px] font-bold rounded mr-2">POST</span>
+      <%= api_base %>/logs
+    </h4>
+    <p class="font-body text-[13px] text-on-surface-variant mb-3">Ingest a new log entry.</p>
+
+    <h5 class="font-body text-[12px] font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Request Body</h5>
+    <pre class="bg-surface-container rounded-lg p-4 font-code text-[13px] text-on-surface overflow-x-auto mb-3">{
+  "level": "info",           // debug | info | warn | error | critical
+  "message": "string",       // required
+  "hostname": "string",      // optional
+  "error_code": "string",    // optional
+  "timestamp": "2024-01-01T00:00:00Z", // optional, defaults to now
+  "metadata": {}             // optional, any JSON object
+}</pre>
+
+    <h5 class="font-body text-[12px] font-semibold text-on-surface-variant uppercase tracking-wider mb-2">cURL Example</h5>
+    <pre class="bg-surface-container rounded-lg p-4 font-code text-[13px] text-on-surface overflow-x-auto">curl -X POST <%= api_base %>/logs \
+  -H "Authorization: Bearer &lt;your_access_token&gt;" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "level": "error",
+    "message": "Connection timeout",
+    "hostname": "prod-worker-01",
+    "error_code": "TIMEOUT_500"
+  }'</pre>
+  </div>
+
+  <!-- List Logs -->
+  <div class="mb-6">
+    <h4 class="font-body text-[14px] font-semibold text-on-surface mb-2">
+      <span class="px-2 py-0.5 bg-blue-100 text-blue-700 font-body text-[11px] font-bold rounded mr-2">GET</span>
+      <%= api_base %>/logs
+    </h4>
+    <p class="font-body text-[13px] text-on-surface-variant mb-3">List logs with pagination and filtering.</p>
+
+    <h5 class="font-body text-[12px] font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Query Parameters</h5>
+    <div class="overflow-hidden rounded-lg border border-[#E2E8F0] mb-3">
+      <table class="w-full">
+        <thead>
+          <tr class="bg-surface-container text-left">
+            <th class="px-4 py-2.5 font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">Param</th>
+            <th class="px-4 py-2.5 font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">Type</th>
+            <th class="px-4 py-2.5 font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">Example</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#F1F5F9]">
+          <tr><td class="px-4 py-2 font-code text-[12px] text-on-surface">page</td><td class="px-4 py-2 font-code text-[12px] text-on-surface-variant">integer</td><td class="px-4 py-2 font-code text-[12px] text-on-surface">page=2</td></tr>
+          <tr><td class="px-4 py-2 font-code text-[12px] text-on-surface">per_page</td><td class="px-4 py-2 font-code text-[12px] text-on-surface-variant">integer</td><td class="px-4 py-2 font-code text-[12px] text-on-surface">per_page=100 (max 200)</td></tr>
+          <tr><td class="px-4 py-2 font-code text-[12px] text-on-surface">level</td><td class="px-4 py-2 font-code text-[12px] text-on-surface-variant">string</td><td class="px-4 py-2 font-code text-[12px] text-on-surface">level=error</td></tr>
+          <tr><td class="px-4 py-2 font-code text-[12px] text-on-surface">levels</td><td class="px-4 py-2 font-code text-[12px] text-on-surface-variant">string</td><td class="px-4 py-2 font-code text-[12px] text-on-surface">levels=warn,error</td></tr>
+          <tr><td class="px-4 py-2 font-code text-[12px] text-on-surface">service</td><td class="px-4 py-2 font-code text-[12px] text-on-surface-variant">string</td><td class="px-4 py-2 font-code text-[12px] text-on-surface">service=payment-gateway</td></tr>
+          <tr><td class="px-4 py-2 font-code text-[12px] text-on-surface">hostname</td><td class="px-4 py-2 font-code text-[12px] text-on-surface-variant">string</td><td class="px-4 py-2 font-code text-[12px] text-on-surface">hostname=prod-worker-01</td></tr>
+          <tr><td class="px-4 py-2 font-code text-[12px] text-on-surface">error_code</td><td class="px-4 py-2 font-code text-[12px] text-on-surface-variant">string</td><td class="px-4 py-2 font-code text-[12px] text-on-surface">error_code=500</td></tr>
+          <tr><td class="px-4 py-2 font-code text-[12px] text-on-surface">q</td><td class="px-4 py-2 font-code text-[12px] text-on-surface-variant">string</td><td class="px-4 py-2 font-code text-[12px] text-on-surface">q=timeout (searches message)</td></tr>
+          <tr><td class="px-4 py-2 font-code text-[12px] text-on-surface">from</td><td class="px-4 py-2 font-code text-[12px] text-on-surface-variant">datetime</td><td class="px-4 py-2 font-code text-[12px] text-on-surface">from=2024-01-01T00:00:00Z</td></tr>
+          <tr><td class="px-4 py-2 font-code text-[12px] text-on-surface">to</td><td class="px-4 py-2 font-code text-[12px] text-on-surface-variant">datetime</td><td class="px-4 py-2 font-code text-[12px] text-on-surface">to=2024-01-02T00:00:00Z</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h5 class="font-body text-[12px] font-semibold text-on-surface-variant uppercase tracking-wider mb-2">cURL Example</h5>
+    <pre class="bg-surface-container rounded-lg p-4 font-code text-[13px] text-on-surface overflow-x-auto">curl -X GET "<%= api_base %>/logs?level=error&page=1&per_page=20" \
+  -H "Authorization: Bearer &lt;your_access_token&gt;"</pre>
+  </div>
+
+  <!-- Get Log -->
+  <div>
+    <h4 class="font-body text-[14px] font-semibold text-on-surface mb-2">
+      <span class="px-2 py-0.5 bg-blue-100 text-blue-700 font-body text-[11px] font-bold rounded mr-2">GET</span>
+      <%= api_base %>/logs/:id
+    </h4>
+    <p class="font-body text-[13px] text-on-surface-variant mb-3">Retrieve a single log entry by ID.</p>
+
+    <h5 class="font-body text-[12px] font-semibold text-on-surface-variant uppercase tracking-wider mb-2">cURL Example</h5>
+    <pre class="bg-surface-container rounded-lg p-4 font-code text-[13px] text-on-surface overflow-x-auto">curl -X GET "<%= api_base %>/logs/1" \
+  -H "Authorization: Bearer &lt;your_access_token&gt;"</pre>
+  </div>
+</div>
+
+<script>
+  function copyToClipboard(elementId, button) {
+    var text = document.getElementById(elementId).textContent
+    navigator.clipboard.writeText(text).then(function() {
+      var icon = button.querySelector('.material-symbols-outlined')
+      if (icon) {
+        icon.textContent = 'check'
+        setTimeout(function() {
+          icon.textContent = 'content_copy'
+        }, 1500)
+      }
+    })
+  }
+</script>

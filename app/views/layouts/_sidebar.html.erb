@@ -59,13 +59,13 @@
 
   <!-- Bottom Actions -->
   <div class="px-2 mt-auto border-t border-white/10 pt-4 space-y-1">
-    <%= link_to "#", class: "flex items-center gap-3 px-4 py-2.5 text-white/70 font-medium hover:bg-white/5 hover:text-white transition-colors duration-150 rounded" do %>
-      <span class="material-symbols-outlined text-[20px] flex-shrink-0">description</span>
-      <span data-sidebar-target="label" class="font-body text-[14px] whitespace-nowrap">Docs</span>
+    <%= link_to services_path, class: "flex items-center gap-3 px-4 py-2.5 text-white/70 font-medium hover:bg-white/5 hover:text-white transition-colors duration-150 rounded" do %>
+      <span class="material-symbols-outlined text-[20px] flex-shrink-0">api</span>
+      <span data-sidebar-target="label" class="font-body text-[14px] whitespace-nowrap">Services</span>
     <% end %>
-    <%= link_to "#", class: "flex items-center gap-3 px-4 py-2.5 text-white/70 font-medium hover:bg-white/5 hover:text-white transition-colors duration-150 rounded" do %>
-      <span class="material-symbols-outlined text-[20px] flex-shrink-0">code</span>
-      <span data-sidebar-target="label" class="font-body text-[14px] whitespace-nowrap">API</span>
+    <%= link_to doc_path, class: "flex items-center gap-3 px-4 py-2.5 text-white/70 font-medium hover:bg-white/5 hover:text-white transition-colors duration-150 rounded" do %>
+      <span class="material-symbols-outlined text-[20px] flex-shrink-0">description</span>
+      <span data-sidebar-target="label" class="font-body text-[14px] whitespace-nowrap">Doc</span>
     <% end %>
   </div>
 </aside>

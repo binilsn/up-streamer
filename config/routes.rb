@@ -14,4 +14,19 @@ Rails.application.routes.draw do
 
   get "explorer", to: "explorer#index"
   get "live_stream", to: "live_stream#index"
+
+  # API reference docs
+  get "doc", to: "doc#show"
+
+  # Service management
+  get "services", to: "services#index"
+  post "services", to: "services#create"
+  post "services/regenerate_token/:id", to: "services#regenerate_token", as: :regenerate_token_service
+
+  # API
+  namespace :api do
+    namespace :v1 do
+      resources :logs, only: [ :index, :show, :create ]
+    end
+  end
 end
