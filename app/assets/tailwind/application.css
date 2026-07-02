@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme {
+    /* Brand colors from DESIGN.md */
+    --color-surface: #fbf8fe;
+    --color-surface-dim: #dbd9de;
+    --color-surface-bright: #fbf8fe;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-low: #f5f2f8;
+    --color-surface-container: #efedf2;
+    --color-surface-container-high: #eae7ec;
+    --color-surface-container-highest: #e4e1e7;
+    --color-on-surface: #1b1b1f;
+    --color-on-surface-variant: #45464f;
+    --color-inverse-surface: #303034;
+    --color-inverse-on-surface: #f2f0f5;
+    --color-outline: #767680;
+    --color-outline-variant: #c6c5d1;
+    --color-surface-tint: #505b92;
+
+    --color-primary: #000110;
+    --color-on-primary: #ffffff;
+    --color-primary-container: #0a174c;
+    --color-on-primary-container: #7681bb;
+    --color-inverse-primary: #b9c3ff;
+
+    --color-secondary: #003ec6;
+    --color-on-secondary: #ffffff;
+    --color-secondary-container: #0052fe;
+    --color-on-secondary-container: #dfe3ff;
+
+    --color-tertiary: #060100;
+    --color-on-tertiary: #ffffff;
+    --color-tertiary-container: #390e00;
+    --color-on-tertiary-container: #b97358;
+
+    --color-error: #ba1a1a;
+    --color-on-error: #ffffff;
+    --color-error-container: #ffdad6;
+    --color-on-error-container: #93000a;
+
+    --color-background: #fbf8fe;
+    --color-on-background: #1b1b1f;
+
+    --color-primary-fixed: #dde1ff;
+    --color-primary-fixed-dim: #b9c3ff;
+    --color-on-primary-fixed: #09164b;
+    --color-on-primary-fixed-variant: #384379;
+
+    --color-secondary-fixed: #dde1ff;
+    --color-secondary-fixed-dim: #b7c4ff;
+    --color-on-secondary-fixed: #001452;
+    --color-on-secondary-fixed-variant: #0038b6;
+
+    --color-tertiary-fixed: #ffdbce;
+    --color-tertiary-fixed-dim: #ffb59a;
+    --color-on-tertiary-fixed: #380d00;
+    --color-on-tertiary-fixed-variant: #6f3721;
+
+    --color-surface-variant: #e4e1e7;
+
+    /* Typography */
+    --font-headline: "Hanken Grotesk", sans-serif;
+    --font-body: "Geist", sans-serif;
+    --font-code: "JetBrains Mono", monospace;
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #fbf8fe;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c6c5d1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #767680;
+}
+
+.material-symbols-outlined {
+    font-variation-settings:
+        "FILL" 0,
+        "wght" 400,
+        "GRAD" 0,
+        "opsz" 24;
+    vertical-align: middle;
+}
+
+/* Sidebar collapse */
+.sidebar-fixed {
+    width: 260px;
+}

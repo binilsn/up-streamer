@@ -7,6 +7,7 @@ gem "propshaft"
 # Use sqlite3 as the database for Active Record
 gem "pg", "~> 1.5"
 gem "figaro"
+gem "tailwindcss-rails"
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
