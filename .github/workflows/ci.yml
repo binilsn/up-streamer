@@ -94,6 +94,16 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Prepare test database
+        env:
+          RAILS_ENV: test
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+          DB_NAME: up_streamer_test
+        run: bin/rails db:test:prepare
+
       - name: Run tests
         env:
           RAILS_ENV: test
@@ -102,8 +112,7 @@ jobs:
           DB_USERNAME: postgres
           DB_PASSWORD: postgres
           DB_NAME: up_streamer_test
-          # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        run: bin/rails db:test:prepare test
+        run: bundle exec rspec
 
   system-test:
     runs-on: ubuntu-latest
@@ -134,6 +143,16 @@ jobs:
         with:
           bundler-cache: true
 
+      - name: Prepare test database
+        env:
+          RAILS_ENV: test
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+          DB_NAME: up_streamer_test
+        run: bin/rails db:test:prepare
+
       - name: Run System Tests
         env:
           RAILS_ENV: test
@@ -142,8 +161,7 @@ jobs:
           DB_USERNAME: postgres
           DB_PASSWORD: postgres
           DB_NAME: up_streamer_test
-          # RAILS_MASTER_KEY: ${{ secrets.RAILS_MASTER_KEY }}
-        run: bin/rails db:test:prepare test:system
+        run: bundle exec rspec spec/system
 
       - name: Keep screenshots from failed system tests
         uses: actions/upload-artifact@v4
