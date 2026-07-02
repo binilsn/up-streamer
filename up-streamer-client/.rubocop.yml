@@ -1,0 +1,25 @@
+AllCops:
+    NewCops: enable
+    Exclude:
+        - "bin/*"
+
+Style/Documentation:
+    Enabled: false
+
+Naming/FileName:
+    Enabled: false
+
+Metrics/ParameterLists:
+    Max: 6
+
+Layout/LineLength:
+    Max: 160
+
+RSpec/ExampleLength:
+    Max: 10
+
+RSpec/MultipleExpectations:
+    Max: 3
+
+RSpec/SpecFilePathFormat:
+    Enabled: false
