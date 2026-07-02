@@ -59,9 +59,10 @@ If Rails is present, the Railtie automatically subscribes to `process_action.act
 ```ruby
 # config/application.rb
 config.up_streamer.access_token = 'your-token'
+config.up_streamer.api_endpoint = 'https://your-app.com/api/v1'
 ```
 
-No manual instrumentation needed — controller actions, status codes, durations, and exceptions are logged automatically.
+Or set via environment variables. No manual instrumentation needed — controller actions, status codes, durations, and exceptions are logged automatically.
 
 ## Client options
 
