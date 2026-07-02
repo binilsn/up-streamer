@@ -1,0 +1,71 @@
+<% active_class = "flex items-center gap-3 px-4 py-2.5 bg-[#16245C] text-white border-l-[4px] border-secondary-container font-semibold rounded-r" %>
+<% inactive_class = "flex items-center gap-3 px-4 py-2.5 text-white/70 font-medium hover:bg-white/5 hover:text-white transition-colors duration-150 rounded-r" %>
+
+<aside data-sidebar-target="sidebar"
+     class="sidebar-fixed hidden md:flex flex-col h-screen py-4 space-y-2 bg-primary-container flex-shrink-0 transition-all duration-200">
+
+  <!-- Logo -->
+  <div class="px-6 mb-6 overflow-hidden">
+    <h1 data-sidebar-target="logoText" class="font-headline text-[20px] font-semibold tracking-tight text-white uppercase whitespace-nowrap">SENTINEL_LOG</h1>
+  </div>
+
+  <!-- User Context Header -->
+  <div data-sidebar-target="userInfo" class="flex items-center gap-3 px-4 py-2.5 mb-2 mx-2 overflow-hidden">
+    <div class="w-8 h-8 rounded bg-secondary/20 text-secondary-container flex items-center justify-center flex-shrink-0">
+      <span class="material-symbols-outlined text-[18px]">hub</span>
+    </div>
+    <div class="overflow-hidden">
+      <p class="font-body text-[14px] text-white font-semibold truncate whitespace-nowrap">System Admin</p>
+      <p class="font-body text-[11px] text-blue-300/70 truncate whitespace-nowrap uppercase tracking-wider">Precision Cluster A</p>
+    </div>
+  </div>
+
+  <!-- Primary Navigation -->
+  <nav class="space-y-1 px-2">
+    <%= link_to root_path, class: current_page?(root_path) ? active_class : inactive_class do %>
+      <span class="material-symbols-outlined text-[20px] flex-shrink-0">dashboard</span>
+      <span data-sidebar-target="navText" class="font-body text-[14px] whitespace-nowrap">Dashboard</span>
+    <% end %>
+    <%= link_to live_stream_path, class: current_page?(live_stream_path) ? active_class : inactive_class do %>
+      <span class="material-symbols-outlined text-[20px] flex-shrink-0">reorder</span>
+      <span data-sidebar-target="navText" class="font-body text-[14px] whitespace-nowrap">Live Stream</span>
+    <% end %>
+    <%= link_to explorer_path, class: current_page?(explorer_path) ? active_class : inactive_class do %>
+      <span class="material-symbols-outlined text-[20px] flex-shrink-0">search_check</span>
+      <span data-sidebar-target="navText" class="font-body text-[14px] whitespace-nowrap">Explorer</span>
+    <% end %>
+    <%= link_to "#", class: inactive_class do %>
+      <span class="material-symbols-outlined text-[20px] flex-shrink-0">notifications_active</span>
+      <span data-sidebar-target="navText" class="font-body text-[14px] whitespace-nowrap">Alerts</span>
+    <% end %>
+  </nav>
+
+  <!-- Contextual Filters -->
+  <div class="px-4 mt-4 space-y-1">
+    <p data-sidebar-target="label" class="font-body text-[11px] text-white/40 uppercase tracking-widest font-semibold px-2 mb-2 whitespace-nowrap">Filters</p>
+    <div class="flex items-center justify-between px-2 py-1.5 text-white/60 hover:bg-white/5 hover:text-white transition-colors duration-150 rounded cursor-pointer">
+      <span class="font-body text-[13px]">hostname</span>
+      <span class="font-code text-[11px] bg-white/10 px-2 py-0.5 rounded-full">42</span>
+    </div>
+    <div class="flex items-center justify-between px-2 py-1.5 text-white/60 hover:bg-white/5 hover:text-white transition-colors duration-150 rounded cursor-pointer">
+      <span class="font-body text-[13px]">service_name</span>
+      <span class="font-code text-[11px] bg-white/10 px-2 py-0.5 rounded-full">12</span>
+    </div>
+    <div class="flex items-center justify-between px-2 py-1.5 text-white/60 hover:bg-white/5 hover:text-white transition-colors duration-150 rounded cursor-pointer">
+      <span class="font-body text-[13px]">error_code</span>
+      <span class="font-code text-[11px] bg-white/10 px-2 py-0.5 rounded-full">8</span>
+    </div>
+  </div>
+
+  <!-- Bottom Actions -->
+  <div class="px-2 mt-auto border-t border-white/10 pt-4 space-y-1">
+    <%= link_to "#", class: "flex items-center gap-3 px-4 py-2.5 text-white/70 font-medium hover:bg-white/5 hover:text-white transition-colors duration-150 rounded" do %>
+      <span class="material-symbols-outlined text-[20px] flex-shrink-0">description</span>
+      <span data-sidebar-target="label" class="font-body text-[14px] whitespace-nowrap">Docs</span>
+    <% end %>
+    <%= link_to "#", class: "flex items-center gap-3 px-4 py-2.5 text-white/70 font-medium hover:bg-white/5 hover:text-white transition-colors duration-150 rounded" do %>
+      <span class="material-symbols-outlined text-[20px] flex-shrink-0">code</span>
+      <span data-sidebar-target="label" class="font-body text-[14px] whitespace-nowrap">API</span>
+    <% end %>
+  </div>
+</aside>

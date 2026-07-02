@@ -1,0 +1,132 @@
+<!-- A. Dashboard Header Row -->
+<div class="flex justify-between items-end mb-6">
+  <div>
+    <h2 class="font-headline text-[32px] font-bold tracking-tight text-on-surface">System Overview</h2>
+    <p class="font-body text-[14px] text-on-surface-variant mt-1">
+      Cluster Status: <span class="text-secondary font-semibold">HEALTHY</span>
+      <span class="text-on-surface-variant mx-2">|</span>
+      124 Active Nodes
+    </p>
+  </div>
+  <div class="flex gap-2">
+    <div class="flex bg-surface-container rounded p-1 border border-outline-variant">
+      <button class="px-4 py-1.5 bg-white shadow-sm text-on-surface font-body text-[12px] font-medium rounded">LIVE</button>
+      <button class="px-4 py-1.5 text-on-surface-variant font-body text-[12px] font-medium">1H</button>
+      <button class="px-4 py-1.5 text-on-surface-variant font-body text-[12px] font-medium">24H</button>
+    </div>
+  </div>
+</div>
+
+<!-- B. Analytical Metric Row (4-Column Grid) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+
+  <!-- Card 1: TOTAL_LOGS_24H -->
+  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
+    <div class="flex justify-between items-start mb-4">
+      <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">TOTAL_LOGS_24H</span>
+      <span class="text-secondary-container material-symbols-outlined text-[20px]">monitoring</span>
+    </div>
+    <div class="font-headline text-[32px] font-bold text-on-surface mb-2">4.2M</div>
+    <div class="flex items-center gap-1 font-body text-[12px] text-secondary-container mb-4">
+      <span class="material-symbols-outlined text-[16px]">trending_up</span>
+      <span>+12.4% vs last period</span>
+    </div>
+    <!-- Progress bar at ~40% -->
+    <div class="h-[3px] bg-[#E2E8F0] w-full overflow-hidden rounded">
+      <div class="bg-secondary-container h-full w-[40%] rounded"></div>
+    </div>
+  </div>
+
+  <!-- Card 2: ERROR_RATE -->
+  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
+    <div class="flex justify-between items-start mb-4">
+      <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">ERROR_RATE</span>
+      <span class="text-error material-symbols-outlined text-[20px]">warning</span>
+    </div>
+    <div class="font-headline text-[32px] font-bold text-error mb-2">0.42%</div>
+    <div class="flex items-center gap-1 font-body text-[12px] text-error mb-4">
+      <span class="material-symbols-outlined text-[16px]">trending_up</span>
+      <span>+0.05% vs last period</span>
+    </div>
+    <!-- 6-column mini bar chart -->
+    <div class="h-10 flex items-end gap-[3px]">
+      <div class="bg-error/20 flex-1 h-[25%] rounded-sm"></div>
+      <div class="bg-error/20 flex-1 h-[35%] rounded-sm"></div>
+      <div class="bg-error/20 flex-1 h-[50%] rounded-sm"></div>
+      <div class="bg-error/40 flex-1 h-[65%] rounded-sm"></div>
+      <div class="bg-error/60 flex-1 h-[85%] rounded-sm"></div>
+      <div class="bg-error/80 flex-1 h-[70%] rounded-sm"></div>
+    </div>
+  </div>
+
+  <!-- Card 3: ACTIVE_ALERTS -->
+  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
+    <div class="flex justify-between items-start mb-4">
+      <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">ACTIVE_ALERTS</span>
+      <span class="text-on-surface material-symbols-outlined text-[20px]">notifications_active</span>
+    </div>
+    <div class="font-headline text-[32px] font-bold text-on-surface mb-2">12</div>
+    <div class="flex items-center gap-1 font-body text-[12px] text-on-surface-variant mb-4">
+      <span class="material-symbols-outlined text-[16px]">timer</span>
+      <span>Last triggered 2m ago</span>
+    </div>
+    <!-- Priority badges: P1(Red), P2(Brown), P3(Gray) -->
+    <div class="flex gap-1">
+      <div class="w-7 h-7 rounded-full border-2 border-white bg-error text-white text-[10px] flex items-center justify-center font-bold shadow-sm">P1</div>
+      <div class="w-7 h-7 rounded-full border-2 border-white bg-[#6f3721] text-white text-[10px] flex items-center justify-center font-bold shadow-sm">P2</div>
+      <div class="w-7 h-7 rounded-full border-2 border-white bg-surface-container-highest text-on-surface-variant text-[10px] flex items-center justify-center font-bold shadow-sm">P3</div>
+    </div>
+  </div>
+
+  <!-- Card 4: SYS_LATENCY_P99 -->
+  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
+    <div class="flex justify-between items-start mb-4">
+      <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">SYS_LATENCY_P99</span>
+      <span class="text-secondary material-symbols-outlined text-[20px]">bolt</span>
+    </div>
+    <div class="font-headline text-[32px] font-bold text-on-surface mb-2">42ms</div>
+    <div class="flex items-center gap-1 font-body text-[12px] text-secondary mb-4">
+      <span class="material-symbols-outlined text-[16px]">trending_down</span>
+      <span>-4ms vs baseline</span>
+    </div>
+    <!-- 7-column bar chart -->
+    <div class="h-10 flex items-end gap-[3px]">
+      <div class="flex-1 bg-secondary/30 h-[45%] rounded-sm"></div>
+      <div class="flex-1 bg-secondary/30 h-[60%] rounded-sm"></div>
+      <div class="flex-1 bg-secondary/30 h-[45%] rounded-sm"></div>
+      <div class="flex-1 bg-secondary/30 h-[70%] rounded-sm"></div>
+      <div class="flex-1 bg-secondary/50 h-[45%] rounded-sm"></div>
+      <div class="flex-1 bg-secondary/60 h-[45%] rounded-sm"></div>
+      <div class="flex-1 bg-secondary/80 h-[45%] rounded-sm"></div>
+    </div>
+  </div>
+</div>
+
+<!-- C. Primary Graphic Container (Log Volume) -->
+<div class="bg-white border border-[#E2E8F0] rounded-lg p-6 min-h-[400px] flex flex-col">
+  <div class="flex justify-between items-start mb-6">
+    <div>
+      <h3 class="font-headline text-[20px] font-semibold text-on-surface">Log Volume (Ingest Rate)</h3>
+      <p class="font-body text-[12px] text-on-surface-variant mt-1">Real-time throughput across all regions</p>
+    </div>
+    <div class="flex gap-4 items-center font-body text-[12px]">
+      <div class="flex items-center gap-1.5">
+        <span class="w-3 h-3 bg-secondary-container rounded-full"></span>
+        <span class="text-on-surface-variant">Production</span>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <span class="w-3 h-3 bg-secondary rounded-full"></span>
+        <span class="text-on-surface-variant">Staging</span>
+      </div>
+    </div>
+  </div>
+  <!-- Chart wireframe canvas -->
+  <div class="flex-1 relative">
+    <div class="absolute inset-0 flex flex-col justify-between pointer-events-none">
+      <div class="border-t border-outline-variant/30 w-full"></div>
+      <div class="border-t border-outline-variant/30 w-full"></div>
+      <div class="border-t border-outline-variant/30 w-full"></div>
+      <div class="border-t border-outline-variant/30 w-full"></div>
+    </div>
+  </div>
+</div>
