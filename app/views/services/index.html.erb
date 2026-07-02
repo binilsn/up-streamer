@@ -1,0 +1,81 @@
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-6">
+  <div>
+    <h2 class="font-headline text-[28px] font-bold tracking-tight text-on-surface">Services</h2>
+    <p class="font-body text-[14px] text-on-surface-variant mt-1">Manage external services and access tokens for log ingestion</p>
+  </div>
+</div>
+
+<!-- Registered Services -->
+<div class="bg-white border border-[#E2E8F0] rounded-lg p-6 mb-6">
+  <h3 class="font-headline text-[18px] font-semibold text-on-surface mb-4">Registered Services</h3>
+
+  <% if @services.any? %>
+    <div class="overflow-hidden rounded-lg border border-[#E2E8F0]">
+      <table class="w-full">
+        <thead>
+          <tr class="bg-surface-container text-left">
+            <th class="px-4 py-3 font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">Name</th>
+            <th class="px-4 py-3 font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">Access Token</th>
+            <th class="px-4 py-3 font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">Status</th>
+            <th class="px-4 py-3 font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#F1F5F9]">
+          <% @services.each do |service| %>
+            <tr class="hover:bg-surface-container/30 transition-colors">
+              <td class="px-4 py-3 font-body text-[13px] font-medium text-on-surface"><%= service.name %></td>
+              <td class="px-4 py-3">
+                <div class="flex items-center gap-2">
+                  <code id="token-<%= service.id %>" class="font-code text-[12px] bg-surface-container px-2 py-1 rounded text-on-surface-variant"><%= service.access_token %></code>
+                  <button onclick="copyToClipboard('token-<%= service.id %>', this)" class="p-1 hover:bg-surface-container rounded transition-colors" title="Copy token">
+                    <span class="material-symbols-outlined text-[16px] text-on-surface-variant pointer-events-none">content_copy</span>
+                  </button>
+                </div>
+              </td>
+              <td class="px-4 py-3">
+                <% if service.active? %>
+                  <span class="px-2 py-1 bg-green-50 text-green-700 font-body text-[11px] font-semibold rounded-full">Active</span>
+                <% else %>
+                  <span class="px-2 py-1 bg-surface-container text-on-surface-variant font-body text-[11px] font-semibold rounded-full">Inactive</span>
+                <% end %>
+              </td>
+              <td class="px-4 py-3">
+                <%= link_to "Regenerate Token", regenerate_token_service_path(service), method: :post, class: "font-body text-[12px] text-secondary hover:text-secondary-container transition-colors" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="font-body text-[13px] text-on-surface-variant">No services registered yet. Create one below.</p>
+  <% end %>
+</div>
+
+<!-- Register New Service -->
+<div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
+  <h3 class="font-headline text-[18px] font-semibold text-on-surface mb-4">Register New Service</h3>
+
+  <%= form_with model: @service, url: services_path, class: "space-y-4 max-w-lg" do |f| %>
+    <% if @service.errors.any? %>
+      <div class="bg-error/10 border border-error/20 rounded-lg p-4">
+        <% @service.errors.full_messages.each do |msg| %>
+          <p class="font-body text-[13px] text-error"><%= msg %></p>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div>
+      <%= f.label :name, class: "font-body text-[13px] font-medium text-on-surface mb-1 block" %>
+      <%= f.text_field :name, placeholder: "e.g. payment-gateway", class: "w-full border border-[#E2E8F0] rounded-lg px-4 py-2.5 font-body text-[14px] focus:outline-none focus:ring-2 focus:ring-secondary-container/30 focus:border-secondary-container" %>
+    </div>
+
+    <div>
+      <%= f.label :description, class: "font-body text-[13px] font-medium text-on-surface mb-1 block" %>
+      <%= f.text_area :description, placeholder: "Optional description", rows: 2, class: "w-full border border-[#E2E8F0] rounded-lg px-4 py-2.5 font-body text-[14px] focus:outline-none focus:ring-2 focus:ring-secondary-container/30 focus:border-secondary-container" %>
+    </div>
+
+    <%= f.submit "Create Service", class: "px-6 py-2.5 bg-secondary-container text-white font-body text-[14px] font-semibold rounded-lg hover:brightness-110 transition-all cursor-pointer" %>
+  <% end %>
+</div>
