@@ -1,0 +1,9 @@
+# Figaro configuration template
+# Copy this file to config/application.yml and fill in your local values.
+# config/application.yml is gitignored and should never be committed.
+
+DB_HOST: "localhost"
+DB_PORT: "5432"
+DB_USERNAME: "postgres"
+DB_PASSWORD: "postgres"
+DB_NAME: "up_streamer_development"
