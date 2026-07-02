@@ -1,151 +1,150 @@
 <!-- A. Command Bar -->
-<div class="space-y-4">
+<%= form_tag explorer_path, method: :get, class: "space-y-4" do %>
   <div class="flex items-center gap-3">
-    <!-- LQL Tag + Query Input -->
     <div class="flex items-center flex-1 bg-white border border-[#E2E8F0] rounded-lg overflow-hidden">
       <span class="font-body text-[12px] font-medium text-on-surface-variant bg-surface-container px-3 py-3 border-r border-[#E2E8F0]">LQL</span>
-      <input class="flex-1 px-4 py-3 font-code text-[13px] text-on-surface focus:outline-none placeholder-on-surface-variant/50" value="service='payment-gateway' AND level='critical' | parse jso" type="text" />
-      <button class="p-3 text-on-surface-variant/50 hover:text-secondary-container transition-colors">
-        <span class="material-symbols-outlined text-[18px]">save</span>
-      </button>
+      <%= text_field_tag :q, params[:q], class: "flex-1 px-4 py-3 font-code text-[13px] text-on-surface focus:outline-none placeholder-on-surface-variant/50", placeholder: "Search logs..." %>
     </div>
 
-    <!-- Run Query Button -->
-    <button class="px-6 py-3 bg-secondary-container text-white font-body text-[14px] font-semibold rounded-lg hover:brightness-110 transition-all flex-shrink-0">
-      RUN QUERY
-    </button>
+    <%= submit_tag "RUN QUERY", class: "px-6 py-3 bg-secondary-container text-white font-body text-[14px] font-semibold rounded-lg hover:brightness-110 transition-all flex-shrink-0 cursor-pointer" %>
 
-    <!-- Timeframe Picker -->
-    <div class="flex items-center gap-2 px-4 py-3 bg-white border border-[#E2E8F0] rounded-lg cursor-pointer flex-shrink-0">
+    <div class="flex items-center gap-2 px-4 py-3 bg-white border border-[#E2E8F0] rounded-lg flex-shrink-0">
       <span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>
-      <span class="font-body text-[13px] text-on-surface font-medium">Last 15m</span>
-      <span class="material-symbols-outlined text-[16px] text-on-surface-variant">expand_more</span>
+      <span class="font-body text-[13px] text-on-surface font-medium">All time</span>
     </div>
   </div>
 
-  <!-- B. Recent Searches Pill Bar -->
   <div class="flex items-center gap-2">
-    <span class="font-body text-[12px] text-on-surface-variant font-medium uppercase tracking-wider flex-shrink-0">RECENT:</span>
-    <div class="flex items-center gap-2 flex-wrap">
-      <span class="px-3 py-1.5 bg-white border border-[#E2E8F0] rounded-full font-code text-[12px] text-on-surface-variant cursor-pointer hover:border-secondary-container hover:text-secondary-container transition-colors">status=500</span>
-      <span class="px-3 py-1.5 bg-white border border-[#E2E8F0] rounded-full font-code text-[12px] text-on-surface-variant cursor-pointer hover:border-secondary-container hover:text-secondary-container transition-colors">latency > 200ms</span>
-      <span class="px-3 py-1.5 bg-white border border-[#E2E8F0] rounded-full font-code text-[12px] text-on-surface-variant cursor-pointer hover:border-secondary-container hover:text-secondary-container transition-colors">host:prod-worker-01</span>
+    <span class="font-body text-[12px] text-on-surface-variant font-medium uppercase tracking-wider flex-shrink-0">LEVEL:</span>
+    <div class="flex gap-2 flex-wrap">
+      <% [ "all", "debug", "info", "warn", "error", "critical" ].each do |level| %>
+        <% url = level == "all" ? explorer_path : explorer_path(level: level, q: params[:q]) %>
+        <% active = level == "all" ? params[:level].blank? : params[:level] == level %>
+        <%= link_to url, class: "px-3 py-1.5 bg-white border border-[#E2E8F0] rounded-full font-code text-[12px] #{active ? 'border-secondary-container text-secondary-container' : 'text-on-surface-variant hover:border-secondary-container hover:text-secondary-container'} transition-colors" do %>
+          <%= level.humanize %>
+        <% end %>
+      <% end %>
     </div>
   </div>
-</div>
+<% end %>
 
-<!-- C. KPI Summary Cards (4-Column Grid) -->
+<!-- C. KPI Summary Cards -->
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-  <!-- Card 1: TOTAL EVENTS -->
   <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
     <div class="flex justify-between items-start mb-3">
       <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">TOTAL EVENTS</span>
     </div>
-    <div class="font-headline text-[28px] font-bold text-on-surface mb-3">1,204,551</div>
-    <!-- 7-bar mini histogram -->
+    <div class="font-headline text-[28px] font-bold text-on-surface mb-3"><%= number_with_delimiter(@total_events) %></div>
     <div class="h-8 flex items-end gap-[3px]">
-      <div class="flex-1 bg-secondary-container/30 h-[30%] rounded-sm"></div>
-      <div class="flex-1 bg-secondary-container/30 h-[45%] rounded-sm"></div>
-      <div class="flex-1 bg-secondary-container/30 h-[60%] rounded-sm"></div>
-      <div class="flex-1 bg-secondary-container/50 h-[75%] rounded-sm"></div>
-      <div class="flex-1 bg-secondary-container/60 h-[55%] rounded-sm"></div>
-      <div class="flex-1 bg-secondary-container/70 h-[80%] rounded-sm"></div>
-      <div class="flex-1 bg-secondary-container/80 h-[65%] rounded-sm"></div>
+      <% heights = [30, 45, 60, 75, 55, 80, 65] %>
+      <% opacities = [0.3, 0.3, 0.3, 0.5, 0.6, 0.7, 0.8] %>
+      <% 7.times do |i| %>
+        <div class="flex-1 bg-secondary-container rounded-sm" style="height: <%= heights[i] %>%; opacity: <%= opacities[i] %>;"></div>
+      <% end %>
     </div>
   </div>
 
-  <!-- Card 2: ERROR RATE -->
   <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
     <div class="flex justify-between items-start mb-3">
       <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">ERROR RATE</span>
     </div>
-    <div class="font-headline text-[28px] font-bold text-error mb-3">0.02%</div>
-    <div class="bg-error/10 rounded px-3 py-2">
-      <span class="font-body text-[12px] font-medium text-error">Healthy</span>
-    </div>
+    <div class="font-headline text-[28px] font-bold text-error mb-3"><%= @error_rate %>%</div>
+    <% if @error_rate < 1 %>
+      <div class="bg-green-50 rounded px-3 py-2">
+        <span class="font-body text-[12px] font-medium text-green-700">Healthy</span>
+      </div>
+    <% else %>
+      <div class="bg-red-50 rounded px-3 py-2">
+        <span class="font-body text-[12px] font-medium text-red-700">Attention needed</span>
+      </div>
+    <% end %>
   </div>
 
-  <!-- Card 3: P99 LATENCY -->
   <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
     <div class="flex justify-between items-start mb-3">
       <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">P99 LATENCY</span>
     </div>
     <div class="font-headline text-[28px] font-bold text-secondary mb-3">142ms</div>
-    <!-- Horizontal bar tracker ~75% -->
     <div class="h-[6px] bg-[#E2E8F0] w-full overflow-hidden rounded">
       <div class="bg-secondary h-full w-[75%] rounded"></div>
     </div>
   </div>
 
-  <!-- Card 4: INDEXED NODES -->
   <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
     <div class="flex justify-between items-start mb-3">
-      <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">INDEXED NODES</span>
+      <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">SERVICES</span>
     </div>
-    <div class="font-headline text-[28px] font-bold text-on-surface mb-3">24/24</div>
+    <div class="font-headline text-[28px] font-bold text-on-surface mb-3"><%= @service_count %></div>
     <div class="flex items-center gap-2">
       <span class="w-2 h-2 rounded-full bg-secondary-container"></span>
-      <span class="font-body text-[12px] text-on-surface-variant">All clusters operational</span>
+      <span class="font-body text-[12px] text-on-surface-variant"><%= pluralize(@service_count, 'service') %> registered</span>
     </div>
   </div>
 </div>
 
+<!-- D. Log Streams Data Table -->
 <!-- D. Structured Log Streams Data Table -->
 <div class="bg-white border border-[#E2E8F0] rounded-lg overflow-hidden">
-  <!-- Table Header -->
-  <div class="grid grid-cols-[140px_100px_1fr_2fr] gap-4 px-6 py-3 bg-surface-container border-b border-[#E2E8F0]">
-    <span class="font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">TIMESTAMP</span>
-    <span class="font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">LEVEL</span>
-    <span class="font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">SERVICE</span>
-    <span class="font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">MESSAGE</span>
-  </div>
-
-  <!-- Row 1: CRITICAL -->
-  <div class="grid grid-cols-[140px_100px_1fr_2fr] gap-4 px-6 py-3.5 border-b border-[#F1F5F9] hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">2023-11-24 14:02:11.452</span>
-    <span class="px-2.5 py-1 bg-error/10 text-error font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">CRITICAL</span>
-    <span class="font-code text-[13px] text-[#6f3721]">payment-gateway</span>
-    <span class="font-body text-[13px] text-on-surface truncate">Failed to process transaction ID #4421 - Connection timeout to upstream ...</span>
-  </div>
-
-  <!-- Row 2: INFO -->
-  <div class="grid grid-cols-[140px_100px_1fr_2fr] gap-4 px-6 py-3.5 border-b border-[#F1F5F9] hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">2023-11-24 14:02:10.981</span>
-    <span class="px-2.5 py-1 bg-blue-50 text-secondary font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">INFO</span>
-    <span class="font-code text-[13px] text-[#6f3721]">auth-api</span>
-    <span class="font-body text-[13px] text-on-surface truncate">User session established for UID: 9982</span>
-  </div>
-
-  <!-- Row 3: WARN -->
-  <div class="grid grid-cols-[140px_100px_1fr_2fr] gap-4 px-6 py-3.5 border-b border-[#F1F5F9] hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">2023-11-24 14:02:08.122</span>
-    <span class="px-2.5 py-1 bg-amber-50 text-amber-700 font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">WARN</span>
-    <span class="font-code text-[13px] text-[#6f3721]">inventory-svc</span>
-    <span class="font-body text-[13px] text-on-surface truncate">Slow query detected on collection 'skus' - Duration 450ms</span>
-  </div>
-
-  <!-- Row 4: INFO -->
-  <div class="grid grid-cols-[140px_100px_1fr_2fr] gap-4 px-6 py-3.5 border-b border-[#F1F5F9] hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">2023-11-24 14:02:05.556</span>
-    <span class="px-2.5 py-1 bg-blue-50 text-secondary font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">INFO</span>
-    <span class="font-code text-[13px] text-[#6f3721]">worker-pool</span>
-    <span class="font-body text-[13px] text-on-surface truncate">Scaling worker nodes: +2 (total 14)</span>
-  </div>
-
-  <!-- Row 5: DEBUG -->
-  <div class="grid grid-cols-[140px_100px_1fr_2fr] gap-4 px-6 py-3.5 border-b border-[#F1F5F9] hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">2023-11-24 14:02:02.109</span>
-    <span class="px-2.5 py-1 bg-surface-container text-on-surface-variant font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">DEBUG</span>
-    <span class="font-code text-[13px] text-[#6f3721]">cache-mgr</span>
-    <span class="font-body text-[13px] text-on-surface truncate">Cache miss for key: product_page_metadata_v2_992</span>
-  </div>
-
-  <!-- Row 6: INFO -->
-  <div class="grid grid-cols-[140px_100px_1fr_2fr] gap-4 px-6 py-3.5 hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">2023-11-24 14:02:00.001</span>
-    <span class="px-2.5 py-1 bg-blue-50 text-secondary font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">INFO</span>
-    <span class="font-code text-[13px] text-[#6f3721]">scheduler</span>
-    <span class="font-body text-[13px] text-on-surface truncate">Completed cron job: daily-cleanup-tasks</span>
-  </div>
+  <table class="w-full">
+    <thead>
+      <tr class="bg-surface-container border-b border-[#E2E8F0]">
+        <th class="px-6 py-3 text-left font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">TIMESTAMP</th>
+        <th class="px-6 py-3 text-left font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">LEVEL</th>
+        <th class="px-6 py-3 text-left font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">SERVICE</th>
+        <th class="px-6 py-3 text-left font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">MESSAGE</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @logs.any? %>
+        <% @logs.each_with_index do |log, idx| %>
+          <% border = idx < @logs.length - 1 ? "border-b border-[#F1F5F9]" : "" %>
+          <% level_class = case log.level
+             when "critical" then "bg-error/10 text-error"
+             when "error" then "bg-error/10 text-error"
+             when "warn" then "bg-amber-50 text-amber-700"
+             when "debug" then "bg-surface-container text-on-surface-variant"
+             else "bg-blue-50 text-secondary"
+             end %>
+          <tr class="<%= border %> hover:bg-surface-container/30 transition-colors">
+            <td class="px-6 py-3.5 font-code text-[13px] text-on-surface"><%= log.timestamp.strftime("%Y-%m-%d %H:%M:%S.%L") %></td>
+            <td class="px-6 py-3.5">
+              <span class="px-2.5 py-1 <%= level_class %> font-body text-[12px] font-semibold rounded-full inline-block"><%= log.level.upcase %></span>
+            </td>
+            <td class="px-6 py-3.5 font-code text-[13px] text-[#6f3721]"><%= log.service.name %></td>
+            <td class="px-6 py-3.5 font-body text-[13px] text-on-surface truncate max-w-0"><%= log.message %></td>
+          </tr>
+        <% end %>
+      <% else %>
+        <tr>
+          <td colspan="4" class="px-6 py-8 text-center font-body text-[14px] text-on-surface-variant">No logs found.</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 </div>
+
+<!-- Pagination -->
+<% if @total_pages > 1 %>
+  <div class="flex items-center justify-between">
+    <span class="font-body text-[13px] text-on-surface-variant">Page <%= @page %> of <%= @total_pages %> (<%= @total %> total)</span>
+    <div class="flex items-center gap-2">
+      <% base_params = { q: params[:q], level: params[:level] }.compact %>
+      <% if @page > 1 %>
+        <%= link_to explorer_path(base_params.merge(page: @page - 1)), class: "px-4 py-2 bg-white border border-[#E2E8F0] rounded-lg font-body text-[13px] text-on-surface hover:bg-surface-container transition-colors" do %>
+          <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+        <% end %>
+      <% end %>
+      <% ([@page - 2, 1].max..[@page + 2, @total_pages].min).each do |p| %>
+        <%= link_to explorer_path(base_params.merge(page: p)), class: "px-3 py-2 #{p == @page ? 'bg-secondary-container text-white' : 'bg-white border border-[#E2E8F0] text-on-surface hover:bg-surface-container'} rounded-lg font-body text-[13px] transition-colors" do %>
+          <%= p %>
+        <% end %>
+      <% end %>
+      <% if @page < @total_pages %>
+        <%= link_to explorer_path(base_params.merge(page: @page + 1)), class: "px-4 py-2 bg-white border border-[#E2E8F0] rounded-lg font-body text-[13px] text-on-surface hover:bg-surface-container transition-colors" do %>
+          <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+<% end %>
