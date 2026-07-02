@@ -30,6 +30,8 @@
 
 /public/assets
 
+# Ignore Figaro application configuration
+/config/application.yml
+
 # Ignore key files for decrypting credentials and more.
 /config/*.key
-
