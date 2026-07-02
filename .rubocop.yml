@@ -6,6 +6,8 @@ plugins:
 
 AllCops:
     NewCops: enable
+    Exclude:
+        - "up-streamer-client/**/*"
 
 # Overwrite or add rules to create your own house style
 #

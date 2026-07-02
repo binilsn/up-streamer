@@ -5,7 +5,7 @@ require_relative 'lib/up-streamer-client/version'
 Gem::Specification.new do |spec|
   spec.name          = 'up-streamer-client'
   spec.version       = UpStreamer::VERSION
-  spec.authors       = ['binilsn']
+  spec.authors       = [ 'binilsn' ]
   spec.summary       = 'Client gem for sending logs to the Up Streamer API'
   spec.description   = 'Send application logs to the Up Streamer log ingestion service with Faraday, auto-flush Rails notifications, and configurable retry.'
   spec.license       = 'MIT'
