@@ -12,8 +12,8 @@ module UpStreamer
     end
 
     def validate!
-      raise ArgumentError, 'api_endpoint is required' unless api_endpoint
-      raise ArgumentError, 'access_token is required' unless access_token
+      raise ArgumentError, 'api_endpoint is required' if api_endpoint.blank?
+      raise ArgumentError, 'access_token is required' if access_token.blank?
     end
   end
 

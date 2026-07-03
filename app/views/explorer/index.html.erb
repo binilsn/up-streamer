@@ -65,9 +65,10 @@
     <div class="flex justify-between items-start mb-3">
       <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">P99 LATENCY</span>
     </div>
-    <div class="font-headline text-[28px] font-bold text-secondary mb-3">142ms</div>
+    <div class="font-headline text-[28px] font-bold text-secondary mb-3"><%= number_with_delimiter(@p99_latency) %>ms</div>
+    <% bar_width = [(@p99_latency / 1000.0 * 100).round, 100].min %>
     <div class="h-[6px] bg-[#E2E8F0] w-full overflow-hidden rounded">
-      <div class="bg-secondary h-full w-[75%] rounded"></div>
+      <div class="bg-secondary h-full rounded" style="width: <%= bar_width %>%"></div>
     </div>
   </div>
 
@@ -83,7 +84,32 @@
   </div>
 </div>
 
-<!-- D. Log Streams Data Table -->
+<!-- Last Log Received -->
+<div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
+  <div class="flex justify-between items-start mb-3">
+    <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">LAST LOG RECEIVED</span>
+    <span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>
+  </div>
+  <% if @last_log %>
+    <div class="font-headline text-[22px] font-bold text-on-surface mb-2"><%= time_ago_in_words(@last_log.timestamp) %> ago</div>
+    <div class="flex items-center gap-3 font-body text-[13px] text-on-surface-variant">
+      <span class="px-2 py-0.5 rounded-full text-[11px] font-semibold
+        <%= case @last_log.level
+           when 'critical' then 'bg-error/10 text-error'
+           when 'error' then 'bg-error/10 text-error'
+           when 'warn' then 'bg-amber-50 text-amber-700'
+           when 'debug' then 'bg-surface-container text-on-surface-variant'
+           else 'bg-blue-50 text-secondary'
+           end %>"><%= @last_log.level.upcase %></span>
+      <span><%= @last_log.service.name %></span>
+      <span class="text-outline">|</span>
+      <span class="truncate"><%= @last_log.message %></span>
+    </div>
+  <% else %>
+    <p class="font-body text-[14px] text-on-surface-variant">No logs received yet.</p>
+  <% end %>
+</div>
+
 <!-- D. Structured Log Streams Data Table -->
 <div class="bg-white border border-[#E2E8F0] rounded-lg overflow-hidden">
   <table class="w-full">
