@@ -1,4 +1,5 @@
 class Api::V1::LogsController < ApplicationController
+  wrap_parameters false
   skip_before_action :verify_authenticity_token
   before_action :authenticate_service, only: :create
 

@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'bundler/setup'
+require 'up-streamer-client'
+
+UpStreamer.configure do |c|
+  c.api_endpoint = ENV.fetch('UP_STREAMER_ENDPOINT', 'http://localhost:3000/api/v1')
+  c.access_token = ENV.fetch('UP_STREAMER_ACCESS_TOKEN', nil)
+end
+
+require 'irb'
+IRB.start

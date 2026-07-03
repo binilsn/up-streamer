@@ -1,5 +1,6 @@
 class Service < ApplicationRecord
   has_secure_token :access_token
+  has_many :logs, dependent: :destroy
 
   before_create :set_defaults
 
