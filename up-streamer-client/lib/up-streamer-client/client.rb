@@ -10,6 +10,8 @@ module UpStreamer
     end
 
     def send_log(message:, level: 'info', hostname: nil, error_code: nil, timestamp: nil, metadata: {})
+      return false if @token.blank?
+
       payload = build_payload(message, level, hostname, error_code, timestamp, metadata)
 
       response = connection.post('logs') do |req|
@@ -19,6 +21,8 @@ module UpStreamer
       end
 
       response.success?
+    rescue Faraday::TimeoutError, Faraday::ConnectionFailed
+      false
     rescue Faraday::Error => e
       warn "[up-streamer-client] HTTP error: #{e.message}"
       false
@@ -39,7 +43,9 @@ module UpStreamer
 
     def connection
       @connection ||= Faraday.new(url: @endpoint) do |f|
-        f.request :retry, max: 3, interval: 0.5, backoff_factor: 2
+        f.options.timeout      = 3  # read timeout
+        f.options.open_timeout = 2  # connect timeout
+        f.request :retry, max: 1, interval: 0.5, backoff_factor: 2
         f.adapter Faraday.default_adapter
       end
     end

@@ -5,8 +5,8 @@ module UpStreamer
     attr_accessor :api_endpoint, :access_token, :auto_flush, :auto_flush_interval
 
     def initialize
-      @api_endpoint = 'http://localhost:3000/api/v1'
-      @access_token = nil
+      @api_endpoint = ENV.fetch('UP_STREAMER_ENDPOINT', 'http://localhost:3001/api/v1')
+      @access_token = ENV.fetch('UP_STREAMER_ACCESS_TOKEN', nil)
       @auto_flush = true
       @auto_flush_interval = 5
     end

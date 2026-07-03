@@ -2,81 +2,49 @@
 
 A Ruby gem for sending application logs to the [Up Streamer](https://github.com/binilsn/up-streamer) log ingestion service.
 
-## Installation
+## 🔧 Rails Setup (1 minute)
 
-Add to your Gemfile:
+**1. Add to Gemfile:**
 
 ```ruby
 gem 'up-streamer-client'
 ```
 
-Or build from source:
-
-```bash
-cd up-streamer-client
-gem build up-streamer-client.gemspec
-gem install up-streamer-client-0.1.0.gem
-```
-
-## Usage
-
-### 1. Configure
+**2. Create `config/initializers/up_streamer.rb`:**
 
 ```ruby
-require 'up-streamer-client'
-
 UpStreamer.configure do |c|
-  # Required — the URL of your Up Streamer API
-  c.api_endpoint = 'https://your-app.com/api/v1'
-
-  # Required — an access token from the Services page (/services)
+  c.api_endpoint = 'http://127.0.0.1:3001/api/v1'
   c.access_token = 'your-service-token-here'
 end
+
+# Optional: forward all Rails.logger calls to the API
+Rails.application.config.logger = UpStreamer::Logger.new
 ```
 
-### 2. Send a log
+**3. Or use environment variables (no initializer needed):**
+
+```bash
+UP_STREAMER_ENDPOINT=http://127.0.0.1:3001/api/v1
+UP_STREAMER_ACCESS_TOKEN=your-service-token-here
+```
+
+**That's it.** The Railtie automatically captures:
+
+| What | How |
+|---|---|
+| Every controller action | ✅ Built-in — method, path, status, duration, exceptions |
+| Every Active Job | ✅ Built-in — job class, ID, queue, arguments, duration |
+| Explicit `Rails.logger.info(...)` calls | ✅ Only if you set `config.logger = UpStreamer::Logger.new` |
+
+## ⚡ Send a log manually
 
 ```ruby
 client = UpStreamer::Client.new
 client.send_log(level: 'error', message: 'Connection timeout', hostname: 'prod-01')
 ```
 
-### 3. Use as a drop-in Ruby Logger
-
-```ruby
-logger = UpStreamer::Logger.new
-logger.info('User signed in')
-logger.warn('Rate limit approaching')
-logger.error('Payment failed')
-```
-
-Each call sends a `POST /api/v1/logs` request with the message and severity level.
-
-### 4. Rails auto-integration
-
-If Rails is present, the Railtie automatically subscribes to `process_action.action_controller` notifications and sends a log for every request:
-
-```ruby
-# config/application.rb
-config.up_streamer.access_token = 'your-token'
-config.up_streamer.api_endpoint = 'https://your-app.com/api/v1'
-```
-
-Or set via environment variables. No manual instrumentation needed — controller actions, status codes, durations, and exceptions are logged automatically.
-
-## Client options
-
-```ruby
-# Override endpoint/token per instance
-client = UpStreamer::Client.new(
-  endpoint: 'https://staging.example.com/api/v1',
-  token:    'staging-token'
-)
-
-client.send_log(level: 'info', message: 'Deploy started')
-```
-
-## Send log parameters
+## 📝 Send log parameters
 
 | Param | Required | Default | Description |
 |---|---|---|---|
@@ -87,22 +55,19 @@ client.send_log(level: 'info', message: 'Deploy started')
 | `timestamp` | no | now | ISO8601 timestamp string |
 | `metadata` | no | `{}` | Arbitrary JSON object |
 
-## Development
+## 🚫 Silent failures
+
+Timeouts, connection refused, and blank tokens fail silently (`false`). Other HTTP errors (auth, server errors) log a warning. Your app won't crash if the Up Streamer service is down.
+
+## 💻 Development
 
 ```bash
-# Install dependencies
-bundle install
-
-# Run tests
-bundle exec rspec
-
-# Lint
-bundle exec rubocop
-
-# Open console with gem loaded
-bin/console
+bin/setup    # Install dependencies
+bundle exec rspec    # Run tests
+bundle exec rubocop  # Lint
+bin/console          # Interactive console
 ```
 
-## License
+## 📄 License
 
 MIT

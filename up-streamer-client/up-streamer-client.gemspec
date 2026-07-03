@@ -8,6 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors       = [ 'binilsn' ]
   spec.summary       = 'Client gem for sending logs to the Up Streamer API'
   spec.description   = 'Send application logs to the Up Streamer log ingestion service with Faraday, auto-flush Rails notifications, and configurable retry.'
+  spec.homepage      = 'https://github.com/binilsn/up-streamer'
   spec.license       = 'MIT'
 
   spec.required_ruby_version = '>= 3.1'
