@@ -7,7 +7,7 @@ A Ruby gem for sending application logs to the [Up Streamer](https://github.com/
 **1. Add to Gemfile:**
 
 ```ruby
-gem 'up-streamer-client'
+gem 'up-streamer-client', github: 'binilsn/up-streamer', glob: 'up-streamer-client/*.gemspec'
 ```
 
 **2. Create `config/initializers/up_streamer.rb`:**
@@ -54,6 +54,38 @@ client.send_log(level: 'error', message: 'Connection timeout', hostname: 'prod-0
 | `error_code` | no | — | Error code identifier |
 | `timestamp` | no | now | ISO8601 timestamp string |
 | `metadata` | no | `{}` | Arbitrary JSON object |
+
+## ⏸️ Pause / Resume log shipping
+
+Toggle log shipping globally at runtime — no restart needed:
+
+```ruby
+# Pause — logs are dropped or redirected to the fallback
+UpStreamer.config.enabled = false
+
+# Resume — logs ship to Up Streamer again
+UpStreamer.config.enabled = true
+```
+
+## 🪵 Fallback logger (avoid data loss when paused)
+
+By default, logs are silently dropped while paused. To keep a local copy, provide a fallback logger:
+
+```ruby
+Rails.application.config.logger = UpStreamer::Logger.new(
+  fallback_logger: Logger.new(Rails.root.join("log/#{Rails.env}.log"))
+)
+```
+
+With a fallback configured:
+
+| Scenario | Behavior |
+|---|---|
+| `enabled = true` | Logs ship to Up Streamer API |
+| `enabled = false` + fallback set | `Rails.logger` writes to local file |
+| `enabled = false` + no fallback | Logs are silently dropped |
+
+Manual `client.send_log(...)` calls and Railtie auto-capture also respect the `enabled` flag. Only the `UpStreamer::Logger` (Rails.logger) gets the fallback — controller/job notifications return early without writing locally.
 
 ## 🚫 Silent failures
 
