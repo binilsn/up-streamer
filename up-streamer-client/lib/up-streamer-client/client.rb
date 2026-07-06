@@ -10,7 +10,8 @@ module UpStreamer
     end
 
     def send_log(message:, level: 'info', hostname: nil, error_code: nil, timestamp: nil, metadata: {})
-      return false if @token.blank?
+      return true unless UpStreamer.config.enabled
+      return false if @token.nil? || @token.empty?
 
       payload = build_payload(message, level, hostname, error_code, timestamp, metadata)
 

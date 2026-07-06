@@ -6,6 +6,8 @@ module UpStreamer
       client = UpStreamer::Client.new
 
       ActiveSupport::Notifications.subscribe(/process_action.action_controller/) do |*args|
+        next unless UpStreamer.config.enabled
+
         event = ActiveSupport::Notifications::Event.new(*args)
         next if event.payload[:controller] == 'api/v1/logs'
 
@@ -27,6 +29,8 @@ module UpStreamer
       end
 
       ActiveSupport::Notifications.subscribe(/perform.active_job/) do |*args|
+        next unless UpStreamer.config.enabled
+
         event = ActiveSupport::Notifications::Event.new(*args)
         job = event.payload[:job]
 

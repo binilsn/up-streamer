@@ -17,6 +17,8 @@ A centralized log ingestion and monitoring dashboard built with Rails 8.1. Servi
 - **Rails auto-instrumentation** — Automatically captures every controller action and Active Job via `ActiveSupport::Notifications`.
 - **Drop-in logger** — Use `UpStreamer::Logger` as a direct replacement for `Rails.logger`.
 - **Silent failures** — Network errors and timeouts never crash your application.
+- **Pause/Resume** — Globally toggle log shipping at runtime via `UpStreamer.config.enabled`.
+- **Fallback logger** — Route logs to a local file when paused.
 
 ## Requirements
 
@@ -82,6 +84,33 @@ Or use environment variables:
 UP_STREAMER_ENDPOINT=http://127.0.0.1:3001/api/v1
 UP_STREAMER_ACCESS_TOKEN=your-service-token-here
 ```
+
+### Pause/Resume Log Shipping
+
+Toggle log shipping globally at runtime without restarting your application:
+
+```ruby
+# Pause — logs are dropped or redirected to fallback
+UpStreamer.config.enabled = false
+
+# Resume — logs ship to Up Streamer again
+UpStreamer.config.enabled = true
+```
+
+By default, logs are silently dropped while paused. To avoid data loss, provide a fallback logger that writes locally instead:
+
+```ruby
+Rails.application.config.logger = UpStreamer::Logger.new(
+  fallback_logger: Logger.new(Rails.root.join("log/#{Rails.env}.log"))
+)
+```
+
+When paused with a fallback configured:
+- `Rails.logger.info(...)` calls → written to the local log file
+- Controller action notifications → skipped (no fallback for auto-capture)
+- Active Job notifications → skipped (no fallback for auto-capture)
+
+Manual `client.send_log(...)` calls also respect the `enabled` flag and return `true` silently when paused.
 
 ### What Gets Captured Automatically
 
