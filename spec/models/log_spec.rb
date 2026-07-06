@@ -5,12 +5,22 @@ RSpec.describe Log, type: :model do
     it "requires a message" do
       log = build(:log, message: nil)
       expect(log).not_to be_valid
+    end
+
+    it "includes message error" do
+      log = build(:log, message: nil)
+      log.valid?
       expect(log.errors[:message]).to include("can't be blank")
     end
 
     it "requires a timestamp" do
       log = build(:log, timestamp: nil)
       expect(log).not_to be_valid
+    end
+
+    it "includes timestamp error" do
+      log = build(:log, timestamp: nil)
+      log.valid?
       expect(log.errors[:timestamp]).to include("can't be blank")
     end
 
@@ -27,20 +37,24 @@ RSpec.describe Log, type: :model do
   end
 
   describe "scopes" do
-    let!(:service) { create(:service) }
+    let(:service) { create(:service) }
     let!(:error_log) { create(:log, service: service, level: "error", timestamp: 1.minute.ago) }
-    let!(:info_log) { create(:log, service: service, level: "info", timestamp: 2.minutes.ago) }
 
-    it "filters by level" do
-      expect(Log.by_level("error")).to contain_exactly(error_log)
+    before do
+      create(:log, service: service, level: "info", timestamp: 2.minutes.ago)
     end
 
-    it "orders by timestamp descending" do
-      expect(Log.recent.first).to eq(error_log)
+    it "filters by level" do
+      expect(described_class.by_level("error")).to contain_exactly(error_log)
+    end
+
+    it "orders by timestamp descending within service" do
+      logs = described_class.where(service: service).recent
+      expect(logs.first).to eq(error_log)
     end
 
     it "searches by message" do
-      expect(Log.search_message(error_log.message)).to contain_exactly(error_log)
+      expect(described_class.search_message(error_log.message)).to contain_exactly(error_log)
     end
   end
 end
