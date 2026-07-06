@@ -20,6 +20,7 @@ class LogIngestionService
     )
 
     if log.save
+      BroadcastLogJob.perform_later(log.id)
       Result.new(success?: true, log: log, errors: nil)
     else
       Result.new(success?: false, log: nil, errors: log.errors.full_messages)

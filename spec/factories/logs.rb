@@ -1,10 +1,11 @@
 FactoryBot.define do
   factory :log do
-    service { nil }
-    level { "MyString" }
-    message { "MyText" }
-    hostname { "MyString" }
-    error_code { "MyString" }
-    metadata { "" }
+    service
+    level { %w[debug info warn error critical].sample }
+    message { Faker::Lorem.sentence }
+    hostname { Faker::Internet.domain_name }
+    error_code { nil }
+    metadata { {} }
+    timestamp { Time.current }
   end
 end
