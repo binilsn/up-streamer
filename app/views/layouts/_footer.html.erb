@@ -1,10 +1,10 @@
-<footer class="flex items-center justify-between w-full py-2.5 px-8 bg-surface-container border-t border-outline-variant text-[12px] flex-shrink-0">
+<footer data-controller="footer" class="flex items-center justify-between w-full py-2.5 px-8 bg-surface-container border-t border-outline-variant text-[12px] flex-shrink-0">
   <!-- Left: Ingestion Rates -->
   <div class="flex items-center gap-2">
     <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
-    <span class="font-body font-medium text-on-surface-variant">INGESTION RATE: 42.1 KB/S</span>
+    <span class="font-body font-medium text-on-surface-variant">INGESTION RATE: <span id="footer-ingestion-rate" class="font-code">0.0 KB/S</span></span>
     <span class="text-outline">|</span>
-    <span class="font-code text-on-surface-variant">EVENTS/SEC: 124</span>
+    <span class="font-code text-on-surface-variant">EVENTS/SEC: <span id="footer-events-per-sec" class="font-code">0</span></span>
   </div>
   <!-- Right: System State Parameters -->
   <div class="flex items-center gap-2 font-code text-on-surface-variant">
