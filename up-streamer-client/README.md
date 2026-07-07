@@ -60,16 +60,26 @@ client.send_log(level: 'error', message: 'Connection timeout', hostname: 'prod-0
 Toggle log shipping globally at runtime — no restart needed:
 
 ```ruby
-# Pause — logs are dropped or redirected to the fallback
+# Pause — logs are redirected to the local fallback
 UpStreamer.config.enabled = false
 
 # Resume — logs ship to Up Streamer again
 UpStreamer.config.enabled = true
 ```
 
-## 🪵 Fallback logger (avoid data loss when paused)
+## 🪵 Automatic fallback
 
-By default, logs are silently dropped while paused. To keep a local copy, provide a fallback logger:
+No configuration needed. When the remote service is unreachable or disabled, logs are automatically written to stderr via a built-in `::Logger`. The Railtie (controller/job notifications) writes to `Rails.logger` as its fallback.
+
+To redirect fallback output to a file instead of stderr, set it globally in the config block:
+
+```ruby
+UpStreamer.configure do |c|
+  c.fallback_logger = Logger.new("log/#{Rails.env}.log")
+end
+```
+
+Or pass it directly to the logger instance:
 
 ```ruby
 Rails.application.config.logger = UpStreamer::Logger.new(
@@ -77,15 +87,13 @@ Rails.application.config.logger = UpStreamer::Logger.new(
 )
 ```
 
-With a fallback configured:
+The resolution order is: **constructor arg → config → stderr**.
 
-| Scenario | Behavior |
-|---|---|
-| `enabled = true` | Logs ship to Up Streamer API |
-| `enabled = false` + fallback set | `Rails.logger` writes to local file |
-| `enabled = false` + no fallback | Logs are silently dropped |
-
-Manual `client.send_log(...)` calls and Railtie auto-capture also respect the `enabled` flag. Only the `UpStreamer::Logger` (Rails.logger) gets the fallback — controller/job notifications return early without writing locally.
+| Scenario | Logger behavior | Railtie behavior |
+|---|---|---|
+| `enabled = true`, API succeeds | Ships to remote | Ships to remote |
+| `enabled = true`, API fails | Writes to fallback | Writes to `Rails.logger` |
+| `enabled = false` | Writes to fallback | Writes to `Rails.logger` |
 
 ## 🚫 Silent failures
 
