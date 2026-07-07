@@ -14,7 +14,10 @@ class DashboardMetricsChannel < ApplicationCable::Channel
   def broadcast_metrics
     ActionCable.server.broadcast("dashboard_metrics", {
       ingestion_rate_kbps: MetricsTracker.ingestion_rate_kbps,
-      events_per_sec: MetricsTracker.events_per_sec
+      events_per_sec: MetricsTracker.events_per_sec,
+      memory_used_mb: MetricsTracker.process_memory_mb,
+      memory_total_mb: MetricsTracker.system_memory_total_mb,
+      cpu_pct: MetricsTracker.process_cpu_pct
     })
   end
 end
