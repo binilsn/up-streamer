@@ -22,19 +22,15 @@ class Api::V1::LogsController < ApplicationController
   def index
     logs = LogQuery.new(Log.recent, params).call
 
-    page = (params[:page] || 1).to_i
-    per_page = [ (params[:per_page] || DEFAULT_PER_PAGE).to_i, MAX_PER_PAGE ].min
-
-    total = logs.count
-    logs = logs.offset((page - 1) * per_page).limit(per_page)
+    @pagy, paginated_logs = pagy(logs, items: (params[:per_page] || DEFAULT_PER_PAGE).to_i, max_items: MAX_PER_PAGE)
 
     render json: {
-      data: logs.map { |l| serialize_log(l) },
+      data: paginated_logs.map { |l| serialize_log(l) },
       meta: {
-        page: page,
-        per_page: per_page,
-        total: total,
-        total_pages: (total.to_f / per_page).ceil
+        page: @pagy.page,
+        per_page: @pagy.items,
+        total: @pagy.count,
+        total_pages: @pagy.pages
       }
     }
   end
