@@ -1,5 +1,5 @@
 <!-- Streaming Control & Filter Toolbar -->
-<div data-controller="live-stream" class="space-y-6">
+<div data-controller="live-stream" data-live-stream-selected-service-value="<%= params[:service].presence || 'all' %>" class="space-y-6">
   <div class="flex items-center justify-between bg-white border border-[#E2E8F0] rounded-lg px-6 py-3">
     <!-- Left: Stream Status -->
     <div class="flex items-center gap-3">

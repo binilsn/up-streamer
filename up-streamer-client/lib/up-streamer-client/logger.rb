@@ -6,7 +6,7 @@ module UpStreamer
   class Logger < ::Logger
     def initialize(client = nil, fallback_logger: nil, progname: nil)
       @client = client || UpStreamer::Client.new
-      @fallback_logger = fallback_logger
+      @fallback_logger = fallback_logger || UpStreamer.config.fallback_logger || ::Logger.new($stderr)
       super(nil)
       @progname = progname
       self.formatter = ->(_severity, _time, _progname, msg) { msg }
@@ -19,12 +19,12 @@ module UpStreamer
       if UpStreamer.config.enabled
         level = severity_to_level(severity)
         @client.send_log(level: level, message: msg.to_s)
-      elsif @fallback_logger
+      else
         @fallback_logger.add(severity, msg, progname)
       end
       true
-    rescue StandardError => e
-      warn "[up-streamer-client] Failed to send log: #{e.message}"
+    rescue StandardError
+      @fallback_logger.add(severity, msg, progname)
       true
     end
 

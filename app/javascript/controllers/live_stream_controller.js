@@ -23,7 +23,10 @@ export default class extends Controller {
         "pausedIndicator",
         "filters",
     ];
-    static values = { maxEntries: { type: Number, default: 500 } };
+    static values = {
+        maxEntries: { type: Number, default: 500 },
+        selectedService: { type: String, default: "all" },
+    };
 
     connect() {
         this.logs = [];
@@ -162,10 +165,14 @@ export default class extends Controller {
         if (total === 0) return;
 
         const level = this._activeLevel();
+        const svc = this.selectedServiceValue;
         // Build filtered index list: positions in this.logs that pass the filter
         const filtered = [];
         for (let i = 0; i < total; i++) {
-            if (level === "all" || this.logs[i].level === level) {
+            const log = this.logs[i];
+            const matchLevel = level === "all" || log.level === level;
+            const matchService = svc === "all" || log.service === svc;
+            if (matchLevel && matchService) {
                 filtered.push(i);
             }
         }

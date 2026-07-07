@@ -18,7 +18,7 @@ A centralized log ingestion and monitoring dashboard built with Rails 8.1. Servi
 - **Drop-in logger** — Use `UpStreamer::Logger` as a direct replacement for `Rails.logger`.
 - **Silent failures** — Network errors and timeouts never crash your application.
 - **Pause/Resume** — Globally toggle log shipping at runtime via `UpStreamer.config.enabled`.
-- **Fallback logger** — Route logs to a local file when paused.
+- **Automatic fallback** — Logs and events go to stderr or `Rails.logger` when the remote is down, no config needed.
 
 ## Requirements
 
@@ -90,14 +90,20 @@ UP_STREAMER_ACCESS_TOKEN=your-service-token-here
 Toggle log shipping globally at runtime without restarting your application:
 
 ```ruby
-# Pause — logs are dropped or redirected to fallback
+# Pause — logs are redirected to the local fallback
 UpStreamer.config.enabled = false
 
 # Resume — logs ship to Up Streamer again
 UpStreamer.config.enabled = true
 ```
 
-By default, logs are silently dropped while paused. To avoid data loss, provide a fallback logger that writes locally instead:
+### Automatic fallback
+
+No configuration needed. Logs and events are never silently dropped:
+- **`UpStreamer::Logger`** defaults to writing to stderr when the remote is down or disabled.
+- **Railtie** (controller/job auto-capture) writes to `Rails.logger` as the fallback.
+
+To redirect fallback output to a file instead of stderr:
 
 ```ruby
 Rails.application.config.logger = UpStreamer::Logger.new(
@@ -105,10 +111,11 @@ Rails.application.config.logger = UpStreamer::Logger.new(
 )
 ```
 
-When paused with a fallback configured:
-- `Rails.logger.info(...)` calls → written to the local log file
-- Controller action notifications → skipped (no fallback for auto-capture)
-- Active Job notifications → skipped (no fallback for auto-capture)
+| Scenario | Logger | Railtie |
+|---|---|---|
+| Enabled, API succeeds | Ships to remote | Ships to remote |
+| Enabled, API fails | Writes to fallback | Writes to `Rails.logger` |
+| Disabled | Writes to fallback | Writes to `Rails.logger` |
 
 Manual `client.send_log(...)` calls also respect the `enabled` flag and return `true` silently when paused.
 

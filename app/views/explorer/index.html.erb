@@ -1,5 +1,6 @@
 <!-- A. Command Bar -->
 <%= form_tag explorer_path, method: :get, class: "space-y-4" do %>
+  <%= hidden_field_tag :service, params[:service] if params[:service].present? && params[:service] != "all" %>
   <div class="flex items-center gap-3">
     <div class="flex items-center flex-1 bg-white border border-[#E2E8F0] rounded-lg overflow-hidden">
       <span class="font-body text-[12px] font-medium text-on-surface-variant bg-surface-container px-3 py-3 border-r border-[#E2E8F0]">LQL</span>
@@ -18,7 +19,8 @@
     <span class="font-body text-[12px] text-on-surface-variant font-medium uppercase tracking-wider flex-shrink-0">LEVEL:</span>
     <div class="flex gap-2 flex-wrap">
       <% [ "all", "debug", "info", "warn", "error", "critical" ].each do |level| %>
-        <% url = level == "all" ? explorer_path : explorer_path(level: level, q: params[:q]) %>
+        <% base = { q: params[:q], service: params[:service] }.compact %>
+        <% url = level == "all" ? explorer_path(base) : explorer_path(base.merge(level: level)) %>
         <% active = level == "all" ? params[:level].blank? : params[:level] == level %>
         <%= link_to url, class: "px-3 py-1.5 bg-white border border-[#E2E8F0] rounded-full font-code text-[12px] #{active ? 'border-secondary-container text-secondary-container' : 'text-on-surface-variant hover:border-secondary-container hover:text-secondary-container'} transition-colors" do %>
           <%= level.humanize %>
@@ -154,7 +156,7 @@
 <div class="flex items-center justify-between pt-4">
   <span class="font-body text-[13px] text-on-surface-variant">Page <%= @page %> of <%= [@total_pages, 1].max %> (<%= @total %> total)</span>
   <div class="flex items-center gap-2">
-    <% base_params = { q: params[:q], level: params[:level] }.compact %>
+    <% base_params = { q: params[:q], level: params[:level], service: params[:service] }.compact %>
     <% if @page > 1 %>
       <%= link_to explorer_path(base_params.merge(page: @page - 1)), class: "px-4 py-2 bg-white border border-[#E2E8F0] rounded-lg font-body text-[13px] text-on-surface hover:bg-surface-container transition-colors" do %>
         <span class="material-symbols-outlined text-[16px]">chevron_left</span>
