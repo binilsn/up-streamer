@@ -79,7 +79,7 @@ class MetricsTracker
   def system_memory_used_mb
     total = read_meminfo("MemTotal")
     avail = read_meminfo("MemAvailable")
-    [((total - avail).to_f / 1024).round(1), 0.0].max
+    [ ((total - avail).to_f / 1024).round(1), 0.0 ].max
   end
 
   def process_cpu_pct
