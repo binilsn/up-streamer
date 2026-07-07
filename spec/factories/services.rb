@@ -1,8 +1,8 @@
 FactoryBot.define do
   factory :service do
-    name { "MyString" }
-    description { "MyText" }
-    access_token { "MyString" }
-    active { false }
+    name { Faker::App.name }
+    description { Faker::Lorem.sentence }
+    access_token { SecureRandom.hex(32) }
+    active { true }
   end
 end

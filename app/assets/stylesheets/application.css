@@ -8,3 +8,19 @@
  *
  * Consider organizing styles into separate files for maintainability.
  */
+
+/* Hot entry highlight — fades from a subtle blue tint to transparent */
+.log-row--hot {
+    animation: hot-fade 2s ease-out forwards;
+}
+
+@keyframes hot-fade {
+    0% {
+        background-color: rgba(0, 82, 254, 0.08);
+        border-left: 3px solid #0052fe;
+    }
+    100% {
+        background-color: transparent;
+        border-left: 3px solid transparent;
+    }
+}

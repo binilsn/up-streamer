@@ -1,117 +1,74 @@
 <!-- Streaming Control & Filter Toolbar -->
-<div class="flex items-center justify-between bg-white border border-[#E2E8F0] rounded-lg px-6 py-3">
-  <!-- Left: Stream Status -->
-  <div class="flex items-center gap-3">
-    <button class="w-8 h-8 flex items-center justify-center bg-surface-container border border-outline-variant rounded hover:bg-surface-container-higher transition-colors">
-      <span class="material-symbols-outlined text-[18px] text-on-surface-variant">pause</span>
-    </button>
-    <div class="flex items-center gap-2">
-      <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
-      <span class="font-body text-[12px] font-semibold text-on-surface-variant uppercase tracking-wider">STREAM ACTIVE</span>
+<div data-controller="live-stream" class="space-y-6">
+  <div class="flex items-center justify-between bg-white border border-[#E2E8F0] rounded-lg px-6 py-3">
+    <!-- Left: Stream Status -->
+    <div class="flex items-center gap-3">
+      <button data-action="click->live-stream#togglePause"
+              class="w-8 h-8 flex items-center justify-center bg-surface-container border border-outline-variant rounded hover:bg-surface-container-higher transition-colors">
+        <span data-live-stream-target="pauseIcon" class="material-symbols-outlined text-[18px] text-on-surface-variant">pause</span>
+      </button>
+      <div class="flex items-center gap-2">
+        <span data-live-stream-target="indicator" class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+        <span class="font-body text-[12px] font-semibold text-on-surface-variant uppercase tracking-wider">STREAM ACTIVE</span>
+      </div>
+      <div data-live-stream-target="pausedIndicator" class="flex items-center gap-2 hidden">
+        <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+        <span class="font-body text-[12px] font-semibold text-on-surface-variant uppercase tracking-wider">PAUSED</span>
+      </div>
+    </div>
+
+    <!-- Center: Severity Facet Filter -->
+    <div class="flex items-center gap-3">
+      <span class="font-body text-[12px] font-medium text-on-surface-variant uppercase tracking-wider">SEVERITY:</span>
+      <div data-live-stream-target="filters" class="flex bg-surface-container rounded p-0.5 border border-outline-variant">
+        <button class="px-3 py-1.5 bg-white shadow-sm text-on-surface font-body text-[12px] font-medium rounded active" data-level-filter="all">ALL</button>
+        <button class="px-3 py-1.5 text-on-surface-variant font-body text-[12px] font-medium hover:text-on-surface transition-colors flex items-center gap-1.5 rounded" data-level-filter="error">
+          <span class="w-1.5 h-1.5 rounded-full bg-error"></span>ERROR
+        </button>
+        <button class="px-3 py-1.5 text-on-surface-variant font-body text-[12px] font-medium hover:text-on-surface transition-colors flex items-center gap-1.5 rounded" data-level-filter="warn">
+          <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>WARN
+        </button>
+        <button class="px-3 py-1.5 text-on-surface-variant font-body text-[12px] font-medium hover:text-on-surface transition-colors flex items-center gap-1.5 rounded" data-level-filter="info">
+          <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>INFO
+        </button>
+      </div>
+    </div>
+
+    <!-- Right: Max Entries Control & Events Count -->
+    <div class="flex items-center gap-4">
+      <div class="flex items-center gap-2">
+        <span class="font-body text-[12px] text-on-surface-variant font-medium uppercase tracking-wider">MAX:</span>
+        <select data-action="change->live-stream#changeMaxEntries"
+                class="font-code text-[12px] bg-surface-container border border-outline-variant rounded px-2 py-1.5 text-on-surface focus:outline-none focus:border-secondary">
+          <option value="100">100</option>
+          <option value="500" selected>500</option>
+          <option value="1000">1,000</option>
+          <option value="5000">5,000</option>
+        </select>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="font-body text-[12px] text-on-surface-variant font-medium">Events:</span>
+        <span data-live-stream-target="count" class="font-code text-[13px] text-on-surface font-semibold">0</span>
+      </div>
     </div>
   </div>
 
-  <!-- Center: Severity Facet Filter -->
-  <div class="flex items-center gap-3">
-    <span class="font-body text-[12px] font-medium text-on-surface-variant uppercase tracking-wider">SEVERITY:</span>
-    <div class="flex bg-surface-container rounded p-0.5 border border-outline-variant">
-      <button class="px-3 py-1.5 bg-white shadow-sm text-on-surface font-body text-[12px] font-medium rounded">ALL</button>
-      <button class="px-3 py-1.5 text-on-surface-variant font-body text-[12px] font-medium hover:text-on-surface transition-colors flex items-center gap-1.5 rounded">
-        <span class="w-1.5 h-1.5 rounded-full bg-error"></span>ERROR
-      </button>
-      <button class="px-3 py-1.5 text-on-surface-variant font-body text-[12px] font-medium hover:text-on-surface transition-colors flex items-center gap-1.5 rounded">
-        <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>WARN
-      </button>
-      <button class="px-3 py-1.5 text-on-surface-variant font-body text-[12px] font-medium hover:text-on-surface transition-colors flex items-center gap-1.5 rounded">
-        <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>INFO
-      </button>
+  <!-- Live Log Stream Grid -->
+  <div class="bg-white border border-[#E2E8F0] rounded-lg overflow-hidden">
+    <!-- Column Header -->
+    <div class="grid grid-cols-[120px_90px_1fr_2.5fr] gap-4 px-6 py-3 bg-surface-container border-b border-[#E2E8F0]">
+      <span class="font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">TIMESTAMP</span>
+      <span class="font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">LEVEL</span>
+      <span class="font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">SOURCE</span>
+      <span class="font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">MESSAGE</span>
     </div>
-  </div>
 
-  <!-- Right: Server Target & Actions -->
-  <div class="flex items-center gap-4">
-    <div class="flex items-center gap-2">
-      <span class="material-symbols-outlined text-[16px] text-on-surface-variant">database</span>
-      <span class="font-code text-[12px] text-on-surface-variant uppercase font-medium">DB-01-MASTER</span>
+    <!-- Virtual-scrolled Log Entries Container -->
+    <div data-live-stream-target="container"
+         class="max-h-[calc(100vh-320px)] overflow-y-auto relative">
+      <div class="placeholder-text flex items-center justify-center py-12 text-on-surface-variant font-body text-[13px]">
+        Waiting for incoming log events...
+      </div>
     </div>
-    <button class="flex items-center gap-2 px-4 py-1.5 bg-surface-container border border-outline-variant rounded hover:bg-surface-container-higher transition-colors">
-      <span class="material-symbols-outlined text-[16px] text-on-surface-variant">download</span>
-      <span class="font-body text-[12px] text-on-surface-variant font-medium">Export</span>
-    </button>
-  </div>
-</div>
-
-<!-- Live Log Stream Grid -->
-<div class="bg-white border border-[#E2E8F0] rounded-lg overflow-hidden">
-  <!-- Column Header -->
-  <div class="grid grid-cols-[120px_90px_1fr_2.5fr] gap-4 px-6 py-3 bg-surface-container border-b border-[#E2E8F0]">
-    <span class="font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">TIMESTAMP</span>
-    <span class="font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">LEVEL</span>
-    <span class="font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">SOURCE</span>
-    <span class="font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">MESSAGE</span>
-  </div>
-
-  <!-- Row 1: WARN -->
-  <div class="grid grid-cols-[120px_90px_1fr_2.5fr] gap-4 px-6 py-3 border-b border-[#F1F5F9] hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">23:28:15.050</span>
-    <span class="px-2.5 py-1 bg-amber-50 text-amber-700 font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">WARN</span>
-    <span class="font-code text-[13px] text-[#6f3721]">worker_pool_a</span>
-    <span class="font-body text-[13px] text-on-surface truncate">Health check performed on node: replica-3.</span>
-  </div>
-
-  <!-- Row 2: WARN -->
-  <div class="grid grid-cols-[120px_90px_1fr_2.5fr] gap-4 px-6 py-3 border-b border-[#F1F5F9] hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">23:28:14.950</span>
-    <span class="px-2.5 py-1 bg-amber-50 text-amber-700 font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">WARN</span>
-    <span class="font-code text-[13px] text-[#6f3721]">db_cluster_01</span>
-    <span class="font-body text-[13px] text-on-surface truncate">User session initialized.</span>
-  </div>
-
-  <!-- Row 3: INFO -->
-  <div class="grid grid-cols-[120px_90px_1fr_2.5fr] gap-4 px-6 py-3 border-b border-[#F1F5F9] hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">23:28:14.150</span>
-    <span class="px-2.5 py-1 bg-blue-50 text-secondary font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">INFO</span>
-    <span class="font-code text-[13px] text-[#6f3721]">db_cluster_01</span>
-    <span class="font-body text-[13px] text-on-surface truncate">Incoming request from 192.168.1.45: POST /v1/telemetry</span>
-  </div>
-
-  <!-- Row 4: INFO -->
-  <div class="grid grid-cols-[120px_90px_1fr_2.5fr] gap-4 px-6 py-3 border-b border-[#F1F5F9] hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">23:28:13.350</span>
-    <span class="px-2.5 py-1 bg-blue-50 text-secondary font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">INFO</span>
-    <span class="font-code text-[13px] text-[#6f3721]">scheduler</span>
-    <span class="font-body text-[13px] text-on-surface truncate">Database deadlock detected, auto-resolving.</span>
-  </div>
-
-  <!-- Row 5: INFO -->
-  <div class="grid grid-cols-[120px_90px_1fr_2.5fr] gap-4 px-6 py-3 border-b border-[#F1F5F9] hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">14:20:15.002</span>
-    <span class="px-2.5 py-1 bg-blue-50 text-secondary font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">INFO</span>
-    <span class="font-code text-[13px] text-[#6f3721]">auth_service</span>
-    <span class="font-body text-[13px] text-on-surface truncate">User authentication successful for session_id: 8f92-a1b2-c3d4</span>
-  </div>
-
-  <!-- Row 6: WARN -->
-  <div class="grid grid-cols-[120px_90px_1fr_2.5fr] gap-4 px-6 py-3 border-b border-[#F1F5F9] hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">14:20:14.998</span>
-    <span class="px-2.5 py-1 bg-amber-50 text-amber-700 font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">WARN</span>
-    <span class="font-code text-[13px] text-[#6f3721]">db_cluster_01</span>
-    <span class="font-body text-[13px] text-on-surface truncate">Connection pool reaching 85% capacity. Slow queries detected on node-2.</span>
-  </div>
-
-  <!-- Row 7: ERROR -->
-  <div class="grid grid-cols-[120px_90px_1fr_2.5fr] gap-4 px-6 py-3 border-b border-[#F1F5F9] hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">14:20:14.850</span>
-    <span class="px-2.5 py-1 bg-error/10 text-error font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">ERROR</span>
-    <span class="font-code text-[13px] text-[#6f3721]">api_gateway</span>
-    <span class="font-body text-[13px] text-on-surface truncate">500 Internal Server Error: Handshake timed out after 5000ms. Retrying...</span>
-  </div>
-
-  <!-- Row 8: INFO -->
-  <div class="grid grid-cols-[120px_90px_1fr_2.5fr] gap-4 px-6 py-3 hover:bg-surface-container/30 transition-colors">
-    <span class="font-code text-[13px] text-on-surface">14:20:14.221</span>
-    <span class="px-2.5 py-1 bg-blue-50 text-secondary font-body text-[12px] font-semibold rounded-full inline-block text-center w-fit">INFO</span>
-    <span class="font-code text-[13px] text-[#6f3721]">worker_pool_a</span>
-    <span class="font-body text-[13px] text-on-surface truncate">Scheduled cleanup task completed. 154 stale records purged.</span>
   </div>
 </div>
