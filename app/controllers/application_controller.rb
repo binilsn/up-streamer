@@ -23,9 +23,7 @@ class ApplicationController < ActionController::Base
   def remove_filter_from_query(query, filter)
     return query if query.blank?
 
-    tokens = LogSearchParser.new(query).call
-    remaining_tokens = []
-    raw_tokens = tokenize_query(query)
+    raw_tokens = LogSearchParser.tokenize(query)
 
     raw_tokens.reject! do |token|
       parsed = LogSearchParser.new(token).call
@@ -33,33 +31,5 @@ class ApplicationController < ActionController::Base
     end
 
     raw_tokens.join(" ")
-  end
-
-  private
-
-  # Simple tokenizer matching LogSearchParser's logic
-  def tokenize_query(raw)
-    tokens = []
-    current = +""
-    in_quotes = false
-
-    raw.each_char do |ch|
-      case ch
-      when '"'
-        in_quotes = !in_quotes
-        current << ch
-      when /\s/
-        if in_quotes
-          current << ch
-        else
-          tokens << current unless current.empty?
-          current = +""
-        end
-      else
-        current << ch
-      end
-    end
-    tokens << current unless current.empty?
-    tokens
   end
 end

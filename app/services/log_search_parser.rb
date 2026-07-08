@@ -20,7 +20,7 @@ class LogSearchParser
   end
 
   def call
-    tokens = tokenize(@query)
+    tokens = self.class.tokenize(@query)
     filters = []
     remaining = []
 
@@ -35,9 +35,7 @@ class LogSearchParser
     Result.new(filters: filters, plain_text: remaining.join(" "))
   end
 
-  private
-
-  def tokenize(raw)
+  def self.tokenize(raw)
     tokens = []
     current = +""
     in_quotes = false
@@ -61,6 +59,8 @@ class LogSearchParser
     tokens << current unless current.empty?
     tokens
   end
+
+  private
 
   def parse_structured_token(token)
     field, remainder = extract_field(token)
