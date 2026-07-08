@@ -1,5 +1,7 @@
 class ExplorerController < ApplicationController
   def index
+    @query = params[:q]
+
     @logs = LogQuery.new(Log.recent, params).call
     @total_events = Log.count
     @error_count = Log.where(level: %w[error critical]).count
@@ -12,5 +14,16 @@ class ExplorerController < ApplicationController
                      .first&.round(1) || 0
 
     @pagy, @logs = pagy(@logs, items: params[:per_page]&.to_i || 20, max_items: 200)
+
+    @structured_filters = extract_structured_filters
+  end
+
+  private
+
+  def extract_structured_filters
+    return [] if params[:q].blank?
+
+    result = LogSearchParser.new(params[:q]).call
+    result.filters
   end
 end

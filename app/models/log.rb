@@ -22,4 +22,29 @@ class Log < ApplicationRecord
   scope :since, ->(from) { where("timestamp >= ?", from) }
   scope :until, ->(to) { where("timestamp <= ?", to) }
   scope :recent, -> { order(timestamp: :desc) }
+
+  # JSONB metadata field scopes
+  scope :by_metadata_eq, ->(field, value) {
+    where("metadata->>? = ?", field, value.to_s)
+  }
+
+  scope :by_metadata_gt, ->(field, value) {
+    where("(metadata->>?)::numeric > ?", field, value.to_f)
+  }
+
+  scope :by_metadata_gte, ->(field, value) {
+    where("(metadata->>?)::numeric >= ?", field, value.to_f)
+  }
+
+  scope :by_metadata_lt, ->(field, value) {
+    where("(metadata->>?)::numeric < ?", field, value.to_f)
+  }
+
+  scope :by_metadata_lte, ->(field, value) {
+    where("(metadata->>?)::numeric <= ?", field, value.to_f)
+  }
+
+  scope :by_tag, ->(tag) {
+    where("metadata->'tags' @> ?::jsonb", "\"#{tag}\"")
+  }
 end

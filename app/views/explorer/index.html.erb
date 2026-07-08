@@ -1,19 +1,87 @@
 <!-- A. Command Bar -->
-<%= form_tag explorer_path, method: :get, class: "space-y-4" do %>
+<%= form_tag explorer_path, method: :get, class: "space-y-4", data: { controller: "search-help", turbo: false } do %>
   <%= hidden_field_tag :service, params[:service] if params[:service].present? && params[:service] != "all" %>
   <div class="flex items-center gap-3">
-    <div class="flex items-center flex-1 bg-white border border-[#E2E8F0] rounded-lg overflow-hidden">
-      <span class="font-body text-[12px] font-medium text-on-surface-variant bg-surface-container px-3 py-3 border-r border-[#E2E8F0]">LQL</span>
-      <%= text_field_tag :q, params[:q], class: "flex-1 px-4 py-3 font-code text-[13px] text-on-surface focus:outline-none placeholder-on-surface-variant/50", placeholder: "Search logs..." %>
+    <div class="flex items-center flex-1 border border-[#E2E8F0] rounded-lg overflow-hidden focus-within:border-secondary-container transition-colors">
+      <%= text_field_tag :q, @query, class: "flex-1 px-4 py-3 font-code text-[13px] text-on-surface bg-white border-0 focus:outline-none focus:ring-0 placeholder-on-surface-variant/50", placeholder: "level:error host:web-01 status:500 duration:>200 \"timeout\"" %>
+      <button type="button" data-action="click->search-help#show" class="px-3 py-3 bg-white border-l border-[#E2E8F0] hover:bg-surface-container transition-colors flex-shrink-0 cursor-pointer">
+        <span class="material-symbols-outlined text-[18px] text-on-surface-variant">help_outline</span>
+      </button>
     </div>
 
-    <%= submit_tag "RUN QUERY", class: "px-6 py-3 bg-secondary-container text-white font-body text-[14px] font-semibold rounded-lg hover:brightness-110 transition-all flex-shrink-0 cursor-pointer" %>
-
-    <div class="flex items-center gap-2 px-4 py-3 bg-white border border-[#E2E8F0] rounded-lg flex-shrink-0">
-      <span class="material-symbols-outlined text-[18px] text-on-surface-variant">schedule</span>
-      <span class="font-body text-[13px] text-on-surface font-medium">All time</span>
-    </div>
+    <%= submit_tag "SEARCH", class: "px-6 py-3 bg-secondary-container text-white font-body text-[14px] font-semibold rounded-lg hover:brightness-110 transition-all flex-shrink-0 cursor-pointer" %>
   </div>
+
+  <!-- Search Help Dialog -->
+  <dialog data-search-help-target="dialog" data-action="keydown->search-help#keydown" class="rounded-xl border border-[#E2E8F0] shadow-2xl p-0 max-w-2xl w-[90vw] backdrop:bg-black/20 mx-auto my-auto fixed inset-0">
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="font-headline text-[20px] font-bold text-on-surface">Search Syntax</h2>
+          <p class="font-body text-[13px] text-on-surface-variant mt-1">Filter logs using structured field:value expressions in the search bar.</p>
+        </div>
+        <button type="button" data-action="search-help#close" class="p-2 hover:bg-surface-container rounded-lg transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[20px] text-on-surface-variant">close</span>
+        </button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <% help_items = [
+          { field: "level", syntax: "level:error", desc: "Filter by log level" },
+          { field: "service", syntax: "service:api", desc: "Filter by service name" },
+          { field: "host", syntax: "host:web-01", desc: "Filter by hostname" },
+          { field: "message", syntax: 'message:"timeout"', desc: "Search log message" },
+          { field: "error_code", syntax: "error_code:ERR_500", desc: "Filter by error code" },
+          { field: "status", syntax: "status:500", desc: "Filter by HTTP status" },
+          { field: "env", syntax: "env:production", desc: "Filter by environment" },
+          { field: "path", syntax: "path:/api/users", desc: "Filter by request path" },
+          { field: "duration", syntax: "duration:>500", desc: "Filter by duration (>, <, >=, <=)" },
+          { field: "trace_id", syntax: "trace_id:abc123", desc: "Filter by trace ID" },
+          { field: "request_id", syntax: "request_id:req_001", desc: "Filter by request ID" },
+          { field: "tag", syntax: "tag:payments", desc: "Filter by metadata tag" },
+        ] %>
+        <% help_items.each do |item| %>
+          <div class="flex items-start gap-3 p-3 rounded-lg bg-surface-container/30 border border-[#E2E8F0]">
+            <code class="font-code text-[12px] font-semibold text-secondary-container whitespace-nowrap"><%= item[:syntax] %></code>
+            <div>
+              <span class="font-body text-[12px] font-medium text-on-surface"><%= item[:field] %></span>
+              <p class="font-body text-[11px] text-on-surface-variant"><%= item[:desc] %></p>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="mt-6 p-4 bg-surface-container/30 rounded-lg border border-[#E2E8F0]">
+        <p class="font-body text-[12px] text-on-surface-variant">
+          <span class="font-semibold text-on-surface">Combine filters:</span>
+          Separate multiple filters with spaces.
+          Regular text without a field prefix searches log messages.
+        </p>
+      </div>
+
+      <div class="mt-4 text-right">
+        <button type="button" data-action="search-help#close" class="px-4 py-2 bg-secondary-container text-white font-body text-[13px] font-semibold rounded-lg hover:brightness-110 transition-colors cursor-pointer">
+          Done
+        </button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Active Structured Filters -->
+  <% if @structured_filters&.any? %>
+    <div class="flex items-center gap-2 flex-wrap">
+      <span class="font-body text-[12px] text-on-surface-variant font-medium uppercase tracking-wider flex-shrink-0">FILTERS:</span>
+      <% @structured_filters.each do |filter| %>
+        <% display = filter.operator == "=" ? "#{filter.field}:#{filter.value}" : "#{filter.field}:#{filter.operator}#{filter.value}" %>
+        <%# Remove this filter from the query and rebuild %>
+        <% new_q = remove_filter_from_query(params[:q], filter) %>
+        <%= link_to explorer_path(request.query_parameters.merge(q: new_q.presence)), class: "inline-flex items-center gap-1.5 px-3 py-1.5 bg-secondary-container/10 border border-secondary-container/30 rounded-full font-code text-[12px] text-secondary-container hover:bg-secondary-container/20 transition-colors group" do %>
+          <span><%= display %></span>
+          <span class="material-symbols-outlined text-[14px] opacity-60 group-hover:opacity-100 transition-opacity">close</span>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
 
   <div class="flex items-center gap-2">
     <span class="font-body text-[12px] text-on-surface-variant font-medium uppercase tracking-wider flex-shrink-0">LEVEL:</span>
