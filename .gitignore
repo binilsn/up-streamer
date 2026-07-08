@@ -44,4 +44,3 @@
 
 # Ignore Node.js dependencies (ESLint)
 /node_modules
-/package-lock.json
