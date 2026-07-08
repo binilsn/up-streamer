@@ -222,24 +222,24 @@
 
 <!-- Pagination -->
 <div class="flex items-center justify-between pt-4">
-  <span class="font-body text-[13px] text-on-surface-variant">Page <%= @page %> of <%= [@total_pages, 1].max %> (<%= @total %> total)</span>
+  <span class="font-body text-[13px] text-on-surface-variant">Page <%= @pagy.page %> of <%= [@pagy.pages, 1].max %> (<%= @pagy.count %> total)</span>
   <div class="flex items-center gap-2">
     <% base_params = { q: params[:q], level: params[:level], service: params[:service] }.compact %>
-    <% if @page > 1 %>
-      <%= link_to explorer_path(base_params.merge(page: @page - 1)), class: "px-4 py-2 bg-white border border-[#E2E8F0] rounded-lg font-body text-[13px] text-on-surface hover:bg-surface-container transition-colors" do %>
+    <% if @pagy.prev %>
+      <%= link_to explorer_path(base_params.merge(page: @pagy.prev)), class: "px-4 py-2 bg-white border border-[#E2E8F0] rounded-lg font-body text-[13px] text-on-surface hover:bg-surface-container transition-colors" do %>
         <span class="material-symbols-outlined text-[16px]">chevron_left</span>
       <% end %>
     <% end %>
-    <% if @total_pages > 0 %>
-      <% ([@page - 2, 1].max..[@page + 2, @total_pages].min).each do |p| %>
-        <%= link_to explorer_path(base_params.merge(page: p)), class: "px-3 py-2 #{p == @page ? 'bg-secondary-container text-white' : 'bg-white border border-[#E2E8F0] text-on-surface hover:bg-surface-container'} rounded-lg font-body text-[13px] transition-colors" do %>
+    <% if @pagy.pages > 0 %>
+      <% ([@pagy.page - 2, 1].max..[@pagy.page + 2, @pagy.pages].min).each do |p| %>
+        <%= link_to explorer_path(base_params.merge(page: p)), class: "px-3 py-2 #{p == @pagy.page ? 'bg-secondary-container text-white' : 'bg-white border border-[#E2E8F0] text-on-surface hover:bg-surface-container'} rounded-lg font-body text-[13px] transition-colors" do %>
           <%= p %>
         <% end %>
       <% end %>
     <% end %>
-    <% if @page < @total_pages %>
-      <%= link_to explorer_path(base_params.merge(page: @page + 1)), class: "px-4 py-2 bg-white border border-[#E2E8F0] rounded-lg font-body text-[13px] text-on-surface hover:bg-surface-container transition-colors" do %>
-        <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+    <% if @pagy.next %>
+      <%= link_to explorer_path(base_params.merge(page: @pagy.next)), class: "px-4 py-2 bg-white border border-[#E2E8F0] rounded-lg font-body text-[13px] text-on-surface hover:bg-surface-container transition-colors" do %>
+        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
       <% end %>
     <% end %>
   </div>

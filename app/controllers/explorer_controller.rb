@@ -13,11 +13,7 @@ class ExplorerController < ApplicationController
                      .pluck(Arel.sql("PERCENTILE_CONT(0.99) WITHIN GROUP (ORDER BY (metadata->>'duration')::double precision)"))
                      .first&.round(1) || 0
 
-    @page = (params[:page] || 1).to_i
-    @per_page = (params[:per_page] || 20).to_i
-    @total = @logs.count
-    @total_pages = (@total.to_f / @per_page).ceil
-    @logs = @logs.offset((@page - 1) * @per_page).limit(@per_page)
+    @pagy, @logs = pagy(@logs, items: params[:per_page]&.to_i || 20, max_items: 200)
 
     @structured_filters = extract_structured_filters
   end
