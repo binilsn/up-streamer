@@ -39,6 +39,25 @@ jobs:
             - name: Scan for security vulnerabilities in JavaScript dependencies
               run: bin/importmap audit
 
+    lint_js:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v6
+
+            - name: Set up Node
+              uses: actions/setup-node@v6
+              with:
+                  node-version: 24
+                  package-manager-cache: false
+
+            - name: Install JS dependencies
+              run: npm ci
+
+            - name: Lint JavaScript for consistent style
+              run: npm run lint
+
     lint:
         runs-on: ubuntu-latest
         env:

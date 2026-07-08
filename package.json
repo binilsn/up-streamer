@@ -1,0 +1,13 @@
+{
+  "name": "up-streamer",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "eslint app/javascript/",
+    "lint:fix": "eslint app/javascript/ --fix"
+  },
+  "devDependencies": {
+    "eslint": "^9.39.4",
+    "globals": "^17.7.0"
+  }
+}

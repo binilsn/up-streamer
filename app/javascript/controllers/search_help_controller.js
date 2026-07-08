@@ -1,29 +1,29 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
-  static targets = ["dialog"]
+  static targets = ["dialog"];
 
   connect() {
     // Close dialog on backdrop click
     this.dialogTarget.addEventListener("click", (event) => {
       if (event.target === this.dialogTarget) {
-        this.close()
+        this.close();
       }
-    })
+    });
   }
 
   show() {
-    this.dialogTarget.showModal()
+    this.dialogTarget.showModal();
   }
 
   close() {
-    this.dialogTarget.close()
+    this.dialogTarget.close();
   }
 
   // Close on Escape key
   keydown(event) {
     if (event.key === "Escape") {
-      this.close()
+      this.close();
     }
   }
 }

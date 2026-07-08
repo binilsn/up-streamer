@@ -41,3 +41,6 @@
 
 # Ignore built gem files
 *.gem
+
+# Ignore Node.js dependencies (ESLint)
+/node_modules
