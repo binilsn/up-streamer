@@ -100,22 +100,32 @@
   </div>
 
   <!-- Card 5: ACTIVE_ALERTS -->
-  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
-    <div class="flex justify-between items-start mb-4">
-      <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">ACTIVE_ALERTS</span>
-      <span class="text-on-surface material-symbols-outlined text-[20px]">notifications_active</span>
+  <%= link_to alerts_path, class: "block" do %>
+    <div class="bg-white border border-[#E2E8F0] rounded-lg p-6 hover:shadow-md transition-shadow">
+      <div class="flex justify-between items-start mb-4">
+        <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">ACTIVE_ALERTS</span>
+        <span class="text-on-surface material-symbols-outlined text-[20px]">notifications_active</span>
+      </div>
+      <div class="font-headline text-[32px] font-bold text-on-surface mb-2" id="metric-active-alerts"><%= Alert.active.count %></div>
+      <div class="flex items-center gap-1 font-body text-[12px] text-on-surface-variant mb-4">
+        <span class="material-symbols-outlined text-[16px]">timer</span>
+        <span><%= time_ago_in_words(Alert.active.recent.first&.triggered_at || Time.current) %> ago</span>
+      </div>
+      <div class="flex gap-1">
+        <% Alert.active.group(:severity).count.sort_by { |_, c| -c }.each do |sev, count| %>
+          <% sev_color = case sev
+             when "critical" then "bg-error text-white"
+             when "high" then "bg-orange-600 text-white"
+             when "medium" then "bg-amber-500 text-white"
+             else "bg-surface-container-highest text-on-surface-variant"
+             end %>
+          <div class="w-7 h-7 rounded-full border-2 border-white <%= sev_color %> text-[10px] flex items-center justify-center font-bold shadow-sm" title="<%= count %> <%= sev %>">
+            <%= count %>
+          </div>
+        <% end %>
+      </div>
     </div>
-    <div class="font-headline text-[32px] font-bold text-on-surface mb-2">12</div>
-    <div class="flex items-center gap-1 font-body text-[12px] text-on-surface-variant mb-4">
-      <span class="material-symbols-outlined text-[16px]">timer</span>
-      <span>Last triggered 2m ago</span>
-    </div>
-    <div class="flex gap-1">
-      <div class="w-7 h-7 rounded-full border-2 border-white bg-error text-white text-[10px] flex items-center justify-center font-bold shadow-sm">P1</div>
-      <div class="w-7 h-7 rounded-full border-2 border-white bg-[#6f3721] text-white text-[10px] flex items-center justify-center font-bold shadow-sm">P2</div>
-      <div class="w-7 h-7 rounded-full border-2 border-white bg-surface-container-highest text-on-surface-variant text-[10px] flex items-center justify-center font-bold shadow-sm">P3</div>
-    </div>
-  </div>
+  <% end %>
 
   <!-- Card 6: SYS_LATENCY_P99 -->
   <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">

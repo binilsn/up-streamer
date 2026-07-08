@@ -39,7 +39,7 @@
       <span class="material-symbols-outlined text-[20px] flex-shrink-0">search_check</span>
       <span data-sidebar-target="navText" class="font-body text-[14px] whitespace-nowrap">Explorer</span>
     <% end %>
-    <%= link_to "#", class: inactive_class do %>
+    <%= link_to alerts_path(service: svc), class: current_page?(alerts_path) ? active_class : inactive_class do %>
       <span class="material-symbols-outlined text-[20px] flex-shrink-0">notifications_active</span>
       <span data-sidebar-target="navText" class="font-body text-[14px] whitespace-nowrap">Alerts</span>
     <% end %>
