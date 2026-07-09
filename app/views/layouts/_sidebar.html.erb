@@ -43,6 +43,10 @@
       <span class="material-symbols-outlined text-[20px] flex-shrink-0">notifications_active</span>
       <span data-sidebar-target="navText" class="font-body text-[14px] whitespace-nowrap">Alerts</span>
     <% end %>
+    <%= link_to alert_rules_path(service: svc), class: current_page?(alert_rules_path) ? active_class : inactive_class do %>
+      <span class="material-symbols-outlined text-[20px] flex-shrink-0">rule_settings</span>
+      <span data-sidebar-target="navText" class="font-body text-[14px] whitespace-nowrap">Alert Rules</span>
+    <% end %>
   </nav>
 
   <!-- Bottom Actions -->

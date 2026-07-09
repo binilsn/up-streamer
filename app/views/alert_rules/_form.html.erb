@@ -1,0 +1,93 @@
+<%# Shared form for creating / editing alert rules %>
+<% rule = local_assigns[:alert_rule] %>
+<% url = rule.new_record? ? alert_rules_path : alert_rule_path(rule) %>
+
+<%= form_with model: rule, url: url, class: "space-y-5" do |f| %>
+  <% if rule.errors.any? %>
+    <div class="bg-error/10 border border-error/20 rounded-lg p-4">
+      <% rule.errors.full_messages.each do |msg| %>
+        <p class="font-body text-[13px] text-error"><%= msg %></p>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <!-- Name -->
+    <div>
+      <%= f.label :name, class: "font-body text-[13px] font-medium text-on-surface mb-1 block" %>
+      <%= f.text_field :name, placeholder: "e.g. Critical Error Detected", class: "w-full border border-[#E2E8F0] rounded-lg px-4 py-2.5 font-body text-[14px] focus:outline-none focus:ring-2 focus:ring-secondary-container/30 focus:border-secondary-container" %>
+    </div>
+
+    <!-- Severity -->
+    <div>
+      <%= f.label :severity, class: "font-body text-[13px] font-medium text-on-surface mb-1 block" %>
+      <%= f.select :severity, AlertRule::SEVERITIES.map { |s| [s.humanize, s] }, {},
+          class: "w-full border border-[#E2E8F0] rounded-lg px-4 py-2.5 font-body text-[14px] focus:outline-none focus:ring-2 focus:ring-secondary-container/30 focus:border-secondary-container bg-white" %>
+    </div>
+  </div>
+
+  <!-- Description -->
+  <div>
+    <%= f.label :description, class: "font-body text-[13px] font-medium text-on-surface mb-1 block" %>
+    <%= f.text_area :description, placeholder: "Optional description of what this rule detects", rows: 2,
+        class: "w-full border border-[#E2E8F0] rounded-lg px-4 py-2.5 font-body text-[14px] focus:outline-none focus:ring-2 focus:ring-secondary-container/30 focus:border-secondary-container" %>
+  </div>
+
+  <!-- Condition -->
+  <div>
+    <span class="font-body text-[13px] font-medium text-on-surface mb-3 block">Condition</span>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div>
+        <%= f.label :field, "Field", class: "font-body text-[12px] text-on-surface-variant mb-1 block" %>
+        <%= f.select :field, AlertRule::FIELDS.map { |f| [f.humanize, f] }, {},
+            class: "w-full border border-[#E2E8F0] rounded-lg px-4 py-2.5 font-body text-[14px] focus:outline-none focus:ring-2 focus:ring-secondary-container/30 focus:border-secondary-container bg-white" %>
+      </div>
+      <div>
+        <%= f.label :operator, "Operator", class: "font-body text-[12px] text-on-surface-variant mb-1 block" %>
+        <%= f.select :operator,
+            { "Equals (==)" => "eq", "Not Equals (!=)" => "neq", "Contains" => "contains" }, {},
+            class: "w-full border border-[#E2E8F0] rounded-lg px-4 py-2.5 font-body text-[14px] focus:outline-none focus:ring-2 focus:ring-secondary-container/30 focus:border-secondary-container bg-white" %>
+      </div>
+      <div>
+        <%= f.label :value, "Value", class: "font-body text-[12px] text-on-surface-variant mb-1 block" %>
+        <%= f.text_field :value, placeholder: "e.g. error, 500, prod", class: "w-full border border-[#E2E8F0] rounded-lg px-4 py-2.5 font-body text-[14px] focus:outline-none focus:ring-2 focus:ring-secondary-container/30 focus:border-secondary-container" %>
+      </div>
+      <div>
+        <%= f.label :cooldown_minutes, "Cooldown (min)", class: "font-body text-[12px] text-on-surface-variant mb-1 block" %>
+        <%= f.number_field :cooldown_minutes, min: 1, class: "w-full border border-[#E2E8F0] rounded-lg px-4 py-2.5 font-body text-[14px] focus:outline-none focus:ring-2 focus:ring-secondary-container/30 focus:border-secondary-container" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scope -->
+  <div>
+    <span class="font-body text-[13px] font-medium text-on-surface mb-3 block">Scope <span class="text-on-surface-variant font-normal">(leave blank to match all)</span></span>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <%= f.label :level, "Log Level", class: "font-body text-[12px] text-on-surface-variant mb-1 block" %>
+        <%= f.select :level,
+            options_for_select([["Any Level", ""]] + Log.levels.keys.map { |l| [l.humanize, l] }, rule.level),
+            {}, class: "w-full border border-[#E2E8F0] rounded-lg px-4 py-2.5 font-body text-[14px] focus:outline-none focus:ring-2 focus:ring-secondary-container/30 focus:border-secondary-container bg-white" %>
+      </div>
+      <div>
+        <%= f.label :service_id, "Service", class: "font-body text-[12px] text-on-surface-variant mb-1 block" %>
+        <%= f.collection_select :service_id, @services, :id, :name,
+            { include_blank: "Any Service" },
+            class: "w-full border border-[#E2E8F0] rounded-lg px-4 py-2.5 font-body text-[14px] focus:outline-none focus:ring-2 focus:ring-secondary-container/30 focus:border-secondary-container bg-white" %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enabled -->
+  <div class="flex items-center gap-3">
+    <%= f.check_box :enabled, class: "w-4 h-4 rounded border-[#E2E8F0] text-secondary-container focus:ring-secondary-container/30" %>
+    <%= f.label :enabled, "Enable this rule immediately", class: "font-body text-[13px] text-on-surface" %>
+  </div>
+
+  <!-- Submit -->
+  <div class="flex items-center gap-3 pt-2">
+    <%= f.submit rule.new_record? ? "Create Rule" : "Update Rule",
+        class: "px-6 py-2.5 bg-secondary-container text-white font-body text-[14px] font-semibold rounded-lg hover:brightness-110 transition-all cursor-pointer" %>
+    <%= link_to "Cancel", alert_rules_path, class: "font-body text-[13px] text-on-surface-variant hover:text-on-surface transition-colors" %>
+  </div>
+<% end %>

@@ -29,6 +29,12 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :alert_rules do
+    member do
+      post :toggle
+    end
+  end
+
   # Service management
   get "services", to: "services#index"
   post "services", to: "services#create"

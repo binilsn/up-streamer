@@ -9,24 +9,23 @@
 #   end
 
 # Seed default alert rules for development
+# Only the error-level rule is enabled by default; the rest are templates you can enable.
+
+# Remove any rules that are no longer in the seed list (e.g. old "Critical Error Detected")
+AlertRule.where.not(name: %w[
+  Error Log Detected Warning Threshold Known Error Code Match Hostname Contains 'prod'
+]).destroy_all
+
 rules = [
-  {
-    name: "Critical Error Detected",
-    description: "Triggered when a log entry has level 'critical'",
-    field: "level",
-    operator: "eq",
-    value: "critical",
-    severity: "critical",
-    cooldown_minutes: 5
-  },
   {
     name: "Error Log Detected",
     description: "Triggered when a log entry has level 'error'",
     field: "level",
     operator: "eq",
     value: "error",
-    severity: "high",
-    cooldown_minutes: 5
+    severity: "critical",
+    cooldown_minutes: 5,
+    enabled: true
   },
   {
     name: "Warning Threshold",
@@ -35,7 +34,8 @@ rules = [
     operator: "eq",
     value: "warn",
     severity: "medium",
-    cooldown_minutes: 2
+    cooldown_minutes: 2,
+    enabled: false
   },
   {
     name: "Known Error Code Match",
@@ -44,7 +44,8 @@ rules = [
     operator: "eq",
     value: "TIMEOUT_500",
     severity: "high",
-    cooldown_minutes: 3
+    cooldown_minutes: 3,
+    enabled: false
   },
   {
     name: "Hostname Contains 'prod'",
@@ -53,14 +54,14 @@ rules = [
     operator: "contains",
     value: "prod",
     severity: "low",
-    cooldown_minutes: 1
+    cooldown_minutes: 1,
+    enabled: false
   }
 ]
 
 rules.each do |attrs|
-  AlertRule.find_or_create_by!(name: attrs[:name]) do |rule|
-    rule.assign_attributes(attrs)
-  end
+  rule = AlertRule.find_or_initialize_by(name: attrs[:name])
+  rule.update!(attrs)
 end
 
 puts "Seeded #{AlertRule.count} alert rules."
