@@ -65,3 +65,15 @@ rules.each do |attrs|
 end
 
 puts "Seeded #{AlertRule.count} alert rules."
+
+# Seed default admin account for development
+unless User.exists?(email: "admin@up-streamer.dev")
+  User.create!(
+    email: "admin@up-streamer.dev",
+    password: "admin123",
+    password_confirmation: "admin123"
+  )
+  puts "Created admin user: admin@up-streamer.dev / admin123"
+else
+  puts "Admin user already exists: admin@up-streamer.dev"
+end

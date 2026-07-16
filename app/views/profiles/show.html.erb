@@ -1,0 +1,57 @@
+<div class="max-w-lg mx-auto">
+  <h1 class="font-headline text-[24px] font-semibold text-[#1B1B1F] mb-6">Profile</h1>
+
+  <%= form_for @user, url: profile_path, method: :patch, html: { data: { turbo: false } } do |f| %>
+    <% if @user.errors.any? %>
+      <div class="mb-6 px-4 py-3 rounded bg-red-50 border border-red-200">
+        <h2 class="text-[13px] font-semibold text-red-800 mb-1">
+          <%= pluralize(@user.errors.count, "error") %> prevented this update:
+        </h2>
+        <ul class="list-disc list-inside text-[12px] text-red-700 space-y-0.5">
+          <% @user.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <!-- Email -->
+    <div class="bg-white border border-[#E2E8F0] rounded-lg p-6 mb-6">
+      <h2 class="font-headline text-[16px] font-semibold text-[#1B1B1F] mb-4">Account Information</h2>
+
+      <div class="mb-4">
+        <%= f.label :email, class: "block text-[13px] font-semibold text-[#45464F] uppercase tracking-wider mb-1.5" %>
+        <%= f.email_field :email, autocomplete: "email", class: "w-full text-sm px-3 py-2 bg-white border border-[#E2E8F0] rounded text-[#1B1B1F] focus:outline-none focus:ring-1 focus:ring-[#0052FF] focus:border-[#0052FF]" %>
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="bg-white border border-[#E2E8F0] rounded-lg p-6 mb-6">
+      <h2 class="font-headline text-[16px] font-semibold text-[#1B1B1F] mb-4">Change Password</h2>
+      <p class="text-[12px] text-[#767680] mb-4">Leave blank if you don't want to change it.</p>
+
+      <div class="mb-4">
+        <%= f.label :password, "New password", class: "block text-[13px] font-semibold text-[#45464F] uppercase tracking-wider mb-1.5" %>
+        <%= f.password_field :password, autocomplete: "new-password", class: "w-full text-sm px-3 py-2 bg-white border border-[#E2E8F0] rounded text-[#1B1B1F] focus:outline-none focus:ring-1 focus:ring-[#0052FF] focus:border-[#0052FF]" %>
+      </div>
+
+      <div class="mb-4">
+        <%= f.label :password_confirmation, "Confirm new password", class: "block text-[13px] font-semibold text-[#45464F] uppercase tracking-wider mb-1.5" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "w-full text-sm px-3 py-2 bg-white border border-[#E2E8F0] rounded text-[#1B1B1F] focus:outline-none focus:ring-1 focus:ring-[#0052FF] focus:border-[#0052FF]" %>
+      </div>
+    </div>
+
+    <!-- Current Password (required for changes) -->
+    <div class="bg-white border border-[#E2E8F0] rounded-lg p-6 mb-6">
+      <h2 class="font-headline text-[16px] font-semibold text-[#1B1B1F] mb-4">Confirm Changes</h2>
+      <p class="text-[12px] text-[#767680] mb-4">Enter your current password to save changes.</p>
+
+      <div class="mb-4">
+        <%= f.label :current_password, class: "block text-[13px] font-semibold text-[#45464F] uppercase tracking-wider mb-1.5" %>
+        <%= f.password_field :current_password, autocomplete: "current-password", class: "w-full text-sm px-3 py-2 bg-white border border-[#E2E8F0] rounded text-[#1B1B1F] focus:outline-none focus:ring-1 focus:ring-[#0052FF] focus:border-[#0052FF]" %>
+      </div>
+
+      <%= f.submit "Save Changes", class: "px-6 py-2.5 cursor-pointer font-semibold text-sm rounded text-white bg-[#0052FF] hover:bg-[#003EC6] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0052FF] transition-colors duration-150" %>
+    </div>
+  <% end %>
+</div>

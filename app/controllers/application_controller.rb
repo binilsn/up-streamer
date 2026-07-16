@@ -7,7 +7,17 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
+  before_action :authenticate_user!
+
+  layout :devise_layout
+
   helper_method :remove_filter_from_query
+
+  private
+
+  def devise_layout
+    "devise" if devise_controller?
+  end
 
   # Removes a specific structured filter from the LQL query string.
   # Used by the view to generate "remove filter" links.
