@@ -1,0 +1,7 @@
+<div class="text-center">
+  <span class="material-symbols-outlined text-[40px] text-[#0052FF] mb-4">logout</span>
+  <p class="text-[14px] text-[#45464F] mb-6">Are you sure you want to sign out?</p>
+  <%= form_with url: rodauth.logout_path, method: :post, data: { turbo: false }, class: "w-full" do |form| %>
+    <%= form.submit rodauth.logout_button, class: "w-full px-8 py-2.5 cursor-pointer font-semibold text-sm rounded text-white bg-[#0052FF] hover:bg-[#003EC6] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0052FF] transition-colors duration-150" %>
+  <% end %>
+</div>

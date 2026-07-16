@@ -1,0 +1,7 @@
+<% unless rodauth.login_form_footer_links.empty? %>
+  <ul class="mt-6 space-y-2 text-center">
+    <% rodauth.login_form_footer_links.sort.each do |_, link, text| %>
+      <li><%= link_to text, link, class: "text-[13px] text-[#0052FF] hover:text-[#003EC6] hover:underline focus:outline-none focus:underline" %></li>
+    <% end %>
+  </ul>
+<% end %>

@@ -65,3 +65,14 @@ rules.each do |attrs|
 end
 
 puts "Seeded #{AlertRule.count} alert rules."
+
+# Seed default admin account for development
+account = Account.find_or_initialize_by(email: "admin@up-streamer.dev")
+if account.new_record? || account.password_hash.blank?
+  account.status = :verified
+  account.password_hash = BCrypt::Password.create("admin123", cost: BCrypt::Engine.cost)
+  account.save!
+  puts "Created/updated admin account: admin@up-streamer.dev / admin123"
+else
+  puts "Admin account already exists: admin@up-streamer.dev"
+end
