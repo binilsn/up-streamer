@@ -45,7 +45,7 @@ gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 gem "image_processing", "~> 1.2"
-gem "pagy", "~> 9.3"
+gem "pagy", "~> 43.6"
 gem "devise"
 
 group :development, :test do
