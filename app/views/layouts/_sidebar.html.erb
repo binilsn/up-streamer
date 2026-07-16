@@ -16,11 +16,11 @@
   <!-- User Context Header -->
   <div data-sidebar-target="userInfo" class="flex items-center gap-3 px-4 py-2.5 mb-2 mx-2 overflow-hidden">
     <div class="w-8 h-8 rounded bg-secondary/20 text-secondary-container flex items-center justify-center flex-shrink-0">
-      <span class="material-symbols-outlined text-[18px]">hub</span>
+      <span class="material-symbols-outlined text-[18px]">person</span>
     </div>
     <div class="overflow-hidden">
-      <p class="font-body text-[14px] text-white font-semibold truncate whitespace-nowrap">System Admin</p>
-      <p class="font-body text-[11px] text-blue-300/70 truncate whitespace-nowrap uppercase tracking-wider">Precision Cluster A</p>
+      <p class="font-body text-[14px] text-white font-semibold truncate whitespace-nowrap"><%= current_user.email %></p>
+      <p class="font-body text-[11px] text-blue-300/70 truncate whitespace-nowrap uppercase tracking-wider">Mission Control</p>
     </div>
   </div>
 
@@ -59,6 +59,10 @@
     <%= link_to doc_path, class: "flex items-center gap-3 px-4 py-2.5 text-white/70 font-medium hover:bg-white/5 hover:text-white transition-colors duration-150 rounded" do %>
       <span class="material-symbols-outlined text-[20px] flex-shrink-0">description</span>
       <span data-sidebar-target="label" class="font-body text-[14px] whitespace-nowrap">Doc</span>
+    <% end %>
+    <%= link_to destroy_user_session_path, data: { turbo_method: :delete }, class: "flex items-center gap-3 px-4 py-2.5 text-white/50 font-medium hover:bg-white/5 hover:text-red-300 transition-colors duration-150 rounded" do %>
+      <span class="material-symbols-outlined text-[20px] flex-shrink-0">logout</span>
+      <span data-sidebar-target="label" class="font-body text-[14px] whitespace-nowrap">Sign Out</span>
     <% end %>
   </div>
 </aside>
