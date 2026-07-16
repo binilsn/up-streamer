@@ -4,18 +4,21 @@ export default class extends Controller {
     static targets = ["sidebar", "label", "userInfo", "logoText", "navText"];
 
     connect() {
-        this.collapsed = false;
+        const stored = localStorage.getItem("sidebar-collapsed");
+        this.collapsed = stored === "true";
+        this._applyState();
     }
 
     toggle() {
         this.collapsed = !this.collapsed;
+        localStorage.setItem("sidebar-collapsed", this.collapsed);
+        this._applyState();
+    }
 
-        if (this.collapsed) {
-            this.sidebarTarget.style.width = "72px";
-        } else {
-            this.sidebarTarget.style.width = "260px";
-        }
+    _applyState() {
+        if (!this.hasSidebarTarget) return;
 
+        this.sidebarTarget.style.width = this.collapsed ? "72px" : "260px";
         this.logoTextTargets.forEach((el) =>
             el.classList.toggle("hidden", this.collapsed),
         );

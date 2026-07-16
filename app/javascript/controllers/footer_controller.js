@@ -33,5 +33,10 @@ export default class extends Controller {
         if (cpuEl && data.cpu_pct != null) {
             cpuEl.textContent = data.cpu_pct.toFixed(1);
         }
+
+        const uptimeEl = document.getElementById("footer-uptime");
+        if (uptimeEl && data.uptime) {
+            uptimeEl.textContent = data.uptime;
+        }
     }
 }

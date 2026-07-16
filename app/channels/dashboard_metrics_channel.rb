@@ -18,7 +18,8 @@ class DashboardMetricsChannel < ApplicationCable::Channel
       memory_used_mb: MetricsTracker.process_memory_mb,
       memory_total_mb: MetricsTracker.system_memory_total_mb,
       cpu_pct: MetricsTracker.process_cpu_pct,
-      active_alerts: Alert.active.count
+      active_alerts: Alert.active.count,
+      uptime: MetricsTracker.server_uptime
     })
   end
 end

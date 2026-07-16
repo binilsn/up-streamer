@@ -14,7 +14,7 @@
   </div>
 
   <!-- User Context Header -->
-  <%= link_to profile_path, class: "flex items-center gap-3 px-4 py-2.5 mb-2 mx-2 overflow-hidden hover:bg-white/5 transition-colors duration-150 rounded" do %>
+  <%= link_to profile_path, data: { sidebar_target: "userInfo" }, class: "flex items-center gap-3 px-4 py-2.5 mb-2 mx-2 overflow-hidden hover:bg-white/5 transition-colors duration-150 rounded" do %>
     <div class="w-8 h-8 rounded bg-secondary/20 text-secondary-container flex items-center justify-center flex-shrink-0">
       <span class="material-symbols-outlined text-[18px]">person</span>
     </div>

@@ -15,7 +15,7 @@ class MetricsTracker
     end
 
     delegate :record, :events_per_sec, :ingestion_rate_kbps, :process_memory_mb,
-             :system_memory_total_mb, :system_memory_used_mb, :process_cpu_pct, to: :instance
+             :system_memory_total_mb, :system_memory_used_mb, :process_cpu_pct, :server_uptime, to: :instance
   end
 
   def record(bytes)
@@ -88,6 +88,13 @@ class MetricsTracker
   rescue => e
     Rails.logger.warn("[MetricsTracker] Failed to get process CPU: #{e.message}")
     0.0
+  end
+
+  def server_uptime
+    seconds = Process.clock_gettime(Process::CLOCK_MONOTONIC).to_i
+    hours = seconds / 3600
+    minutes = (seconds % 3600) / 60
+    "#{hours}h #{minutes}m"
   end
 
   private
