@@ -21,6 +21,20 @@ Rails.application.routes.draw do
   # API reference docs
   get "doc", to: "doc#show"
 
+  # Alerts
+  resources :alerts, only: [ :index ] do
+    member do
+      post :acknowledge
+      post :resolve
+    end
+  end
+
+  resources :alert_rules do
+    member do
+      post :toggle
+    end
+  end
+
   # Service management
   get "services", to: "services#index"
   post "services", to: "services#create"

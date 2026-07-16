@@ -1,0 +1,163 @@
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-6">
+  <div>
+    <h2 class="font-headline text-[28px] font-bold tracking-tight text-on-surface">Alert Rules</h2>
+    <p class="font-body text-[14px] text-on-surface-variant mt-1">
+      Configure conditions that trigger alerts when log entries match
+    </p>
+  </div>
+  <div class="flex items-center gap-3">
+    <% enabled_count = @alert_rules.count(&:enabled) %>
+    <% disabled_count = @alert_rules.size - enabled_count %>
+    <span class="px-2.5 py-1 font-body text-[11px] font-semibold rounded-full border bg-green-50 text-green-700 border-green-200">ENABLED <%= enabled_count %></span>
+    <% if disabled_count > 0 %>
+      <span class="px-2.5 py-1 font-body text-[11px] font-semibold rounded-full border bg-surface-container text-on-surface-variant border-outline-variant">DISABLED <%= disabled_count %></span>
+    <% end %>
+    <span class="font-body text-[12px] text-on-surface-variant">
+      <%= @alert_rules.size %> total rule<%= @alert_rules.size == 1 ? '' : 's' %>
+    </span>
+  </div>
+</div>
+
+<!-- Rules Table -->
+<div class="bg-white border border-[#E2E8F0] rounded-lg overflow-hidden mb-6">
+  <div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="bg-surface-container border-b border-[#E2E8F0]">
+          <th class="text-left font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant px-6 py-3">Rule</th>
+          <th class="text-left font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant px-6 py-3">Condition</th>
+          <th class="text-left font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant px-6 py-3">Severity</th>
+          <th class="text-left font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant px-6 py-3">Scope</th>
+          <th class="text-left font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant px-6 py-3">Cooldown</th>
+          <th class="text-left font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant px-6 py-3">Last Triggered</th>
+          <th class="text-left font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant px-6 py-3">Alerts</th>
+          <th class="text-left font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant px-6 py-3">Status</th>
+          <th class="text-right font-body text-[11px] font-medium uppercase tracking-wider text-on-surface-variant px-6 py-3">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @alert_rules.empty? %>
+          <tr>
+            <td colspan="9" class="px-6 py-12 text-center font-body text-[13px] text-on-surface-variant">
+              No alert rules configured yet. Create one below.
+            </td>
+          </tr>
+        <% else %>
+          <% @alert_rules.each do |rule| %>
+            <tr class="border-b border-[#F1F5F9] hover:bg-surface-container/30 transition-colors">
+              <!-- Rule Name + Description -->
+              <td class="px-6 py-4">
+                <div class="font-body text-[13px] font-medium text-on-surface"><%= rule.name %></div>
+                <% if rule.description.present? %>
+                  <div class="font-body text-[11px] text-on-surface-variant mt-0.5"><%= rule.description.truncate(100) %></div>
+                <% end %>
+              </td>
+
+              <!-- Condition: Field Op Value -->
+              <td class="px-6 py-4">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <code class="font-code text-[12px] bg-surface-container px-1.5 py-0.5 rounded text-on-surface-variant"><%= rule.field %></code>
+                  <span class="font-body text-[12px] text-on-surface-variant">
+                    <%= { "eq" => "=", "neq" => "≠", "contains" => "~" }[rule.operator] || rule.operator %>
+                  </span>
+                  <code class="font-code text-[12px] bg-surface-container px-1.5 py-0.5 rounded text-on-surface-variant"><%= rule.value %></code>
+                </div>
+              </td>
+
+              <!-- Severity Badge -->
+              <td class="px-6 py-4">
+                <% sev_class = case rule.severity
+                   when "critical" then "bg-red-100 text-red-800"
+                   when "high" then "bg-orange-100 text-orange-800"
+                   when "medium" then "bg-amber-100 text-amber-800"
+                   when "low" then "bg-blue-100 text-blue-800"
+                   end %>
+                <span class="px-2.5 py-1 font-body text-[11px] font-semibold rounded-full <%= sev_class %>"><%= rule.severity.upcase %></span>
+              </td>
+
+              <!-- Scope: Level + Service -->
+              <td class="px-6 py-4">
+                <div class="space-y-1">
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-body text-[11px] text-on-surface-variant uppercase tracking-wider">Level:</span>
+                    <% if rule.level.present? %>
+                      <% level_class = case rule.level
+                         when "critical" then "bg-red-100 text-red-800"
+                         when "error" then "bg-red-50 text-red-700"
+                         when "warn" then "bg-amber-50 text-amber-700"
+                         when "info" then "bg-blue-50 text-blue-700"
+                         when "debug" then "bg-gray-100 text-gray-700"
+                         end %>
+                      <span class="px-1.5 py-0.5 font-code text-[10px] font-semibold rounded <%= level_class %>"><%= rule.level.upcase %></span>
+                    <% else %>
+                      <span class="font-body text-[11px] text-on-surface-variant">Any</span>
+                    <% end %>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="font-body text-[11px] text-on-surface-variant uppercase tracking-wider">Svc:</span>
+                    <% if rule.service.present? %>
+                      <span class="font-body text-[12px] font-medium text-on-surface"><%= rule.service.name %></span>
+                    <% else %>
+                      <span class="font-body text-[11px] text-on-surface-variant">Any</span>
+                    <% end %>
+                  </div>
+                </div>
+              </td>
+
+              <!-- Cooldown -->
+              <td class="px-6 py-4 font-body text-[12px] text-on-surface-variant">
+                <%= pluralize(rule.cooldown_minutes, "min") %>
+              </td>
+
+              <!-- Last Triggered -->
+              <td class="px-6 py-4 font-code text-[12px] text-on-surface-variant">
+                <% if rule.last_triggered_at %>
+                  <%= time_ago_in_words(rule.last_triggered_at) %> ago
+                <% else %>
+                  <span class="text-on-surface-variant/50">Never</span>
+                <% end %>
+              </td>
+
+              <!-- Alert Count -->
+              <td class="px-6 py-4">
+                <%= link_to alerts_path, class: "font-body text-[13px] font-semibold text-secondary hover:text-secondary-container transition-colors" do %>
+                  <%= rule.alerts.count %>
+                <% end %>
+              </td>
+
+              <!-- Enabled/Disabled Toggle -->
+              <td class="px-6 py-4">
+                <%= button_to toggle_alert_rule_path(rule), method: :post,
+                    class: "relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ease-in-out cursor-pointer #{rule.enabled? ? 'bg-secondary-container' : 'bg-surface-container-highest'}" do %>
+                  <span class="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200 ease-in-out <%= rule.enabled? ? 'translate-x-6' : 'translate-x-1' %>"></span>
+                <% end %>
+              </td>
+
+              <!-- Actions -->
+              <td class="px-6 py-4 text-right">
+                <div class="flex items-center justify-end gap-2">
+                  <%= link_to edit_alert_rule_path(rule),
+                      class: "p-1.5 hover:bg-surface-container rounded transition-colors", title: "Edit rule" do %>
+                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant">edit</span>
+                  <% end %>
+                  <%= button_to alert_rule_path(rule), method: :delete,
+                      class: "p-1.5 hover:bg-error/10 rounded transition-colors", title: "Delete rule",
+                      data: { turbo_confirm: "Delete rule '#{rule.name}'?\nThis cannot be undone and will remove all associated alerts." } do %>
+                    <span class="material-symbols-outlined text-[18px] text-error">delete</span>
+                  <% end %>
+                </div>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Create New Rule -->
+<div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
+  <h3 class="font-headline text-[18px] font-semibold text-on-surface mb-4">Create New Rule</h3>
+  <%= render "form", alert_rule: @alert_rule %>
+</div>

@@ -24,24 +24,29 @@
     </div>
   </div>
 
+
+
   <!-- Primary Navigation -->
   <nav class="space-y-1 px-2">
-    <% svc = params[:service].presence %>
-    <%= link_to root_path(service: svc), class: current_page?(root_path) ? active_class : inactive_class do %>
+    <%= link_to root_path, class: current_page?(root_path) ? active_class : inactive_class do %>
       <span class="material-symbols-outlined text-[20px] flex-shrink-0">dashboard</span>
       <span data-sidebar-target="navText" class="font-body text-[14px] whitespace-nowrap">Dashboard</span>
     <% end %>
-    <%= link_to live_stream_path(service: svc), class: current_page?(live_stream_path) ? active_class : inactive_class do %>
+    <%= link_to live_stream_path, class: current_page?(live_stream_path) ? active_class : inactive_class do %>
       <span class="material-symbols-outlined text-[20px] flex-shrink-0">reorder</span>
       <span data-sidebar-target="navText" class="font-body text-[14px] whitespace-nowrap">Live Stream</span>
     <% end %>
-    <%= link_to explorer_path(service: svc), class: current_page?(explorer_path) ? active_class : inactive_class do %>
+    <%= link_to explorer_path, class: current_page?(explorer_path) ? active_class : inactive_class do %>
       <span class="material-symbols-outlined text-[20px] flex-shrink-0">search_check</span>
       <span data-sidebar-target="navText" class="font-body text-[14px] whitespace-nowrap">Explorer</span>
     <% end %>
-    <%= link_to "#", class: inactive_class do %>
+    <%= link_to alerts_path, class: current_page?(alerts_path) ? active_class : inactive_class do %>
       <span class="material-symbols-outlined text-[20px] flex-shrink-0">notifications_active</span>
       <span data-sidebar-target="navText" class="font-body text-[14px] whitespace-nowrap">Alerts</span>
+    <% end %>
+    <%= link_to alert_rules_path, class: current_page?(alert_rules_path) ? active_class : inactive_class do %>
+      <span class="material-symbols-outlined text-[20px] flex-shrink-0">rule_settings</span>
+      <span data-sidebar-target="navText" class="font-body text-[14px] whitespace-nowrap">Alert Rules</span>
     <% end %>
   </nav>
 

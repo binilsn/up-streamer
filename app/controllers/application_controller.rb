@@ -7,18 +7,7 @@ class ApplicationController < ActionController::Base
   # Changes to the importmap will invalidate the etag for HTML responses
   stale_when_importmap_changes
 
-  helper_method :all_services, :selected_service_name, :remove_filter_from_query
-
-  private
-
-  def all_services
-    @all_services ||= Service.active.order(:name).pluck(:name)
-  end
-
-  def selected_service_name
-    return nil if params[:service].blank? || params[:service] == "all"
-    params[:service]
-  end
+  helper_method :remove_filter_from_query
 
   # Removes a specific structured filter from the LQL query string.
   # Used by the view to generate "remove filter" links.

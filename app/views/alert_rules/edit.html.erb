@@ -1,0 +1,17 @@
+<!-- Page Header -->
+<div class="mb-6">
+  <div class="flex items-center gap-2 mb-1">
+    <%= link_to alert_rules_path, class: "text-on-surface-variant hover:text-on-surface transition-colors" do %>
+      <span class="material-symbols-outlined text-[18px]">arrow_back</span>
+    <% end %>
+    <h2 class="font-headline text-[28px] font-bold tracking-tight text-on-surface">Edit Rule</h2>
+  </div>
+  <p class="font-body text-[14px] text-on-surface-variant ml-8">
+    <%= @alert_rule.name %>
+  </p>
+</div>
+
+<!-- Edit Form -->
+<div class="bg-white border border-[#E2E8F0] rounded-lg p-6 max-w-2xl">
+  <%= render "form", alert_rule: @alert_rule %>
+</div>
