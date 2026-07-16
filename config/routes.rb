@@ -41,6 +41,9 @@ Rails.application.routes.draw do
   post "services", to: "services#create"
   post "services/regenerate_token/:id", to: "services#regenerate_token", as: :regenerate_token_service
 
+  # User profile
+  resource :profile, only: [ :show, :update ]
+
   # API
   namespace :api do
     namespace :v1 do
