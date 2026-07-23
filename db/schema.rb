@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_07_16_104435) do
+ActiveRecord::Schema[8.1].define(version: 2026_07_22_113447) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -99,6 +99,21 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_16_104435) do
     t.datetime "timestamp", null: false
     t.datetime "updated_at", null: false
     t.index ["service_id"], name: "index_logs_on_service_id"
+  end
+
+  create_table "server_checks", force: :cascade do |t|
+    t.datetime "checked_at", null: false
+    t.datetime "created_at", null: false
+    t.jsonb "metadata", default: {}
+    t.integer "response_time_ms"
+    t.bigint "service_id", null: false
+    t.datetime "ssl_expires_at"
+    t.text "ssl_issuer"
+    t.boolean "ssl_valid"
+    t.string "status", null: false
+    t.datetime "updated_at", null: false
+    t.index ["service_id", "checked_at"], name: "idx_server_checks_on_service_and_checked_at"
+    t.index ["service_id"], name: "index_server_checks_on_service_id"
   end
 
   create_table "services", force: :cascade do |t|
@@ -262,6 +277,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_07_16_104435) do
   add_foreign_key "alerts", "logs"
   add_foreign_key "alerts", "services"
   add_foreign_key "logs", "services"
+  add_foreign_key "server_checks", "services"
   add_foreign_key "solid_queue_blocked_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_claimed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade
   add_foreign_key "solid_queue_failed_executions", "solid_queue_jobs", column: "job_id", on_delete: :cascade

@@ -3,6 +3,7 @@ class Service < ApplicationRecord
   has_many :logs, dependent: :destroy
   has_many :alert_rules, dependent: :destroy
   has_many :alerts, dependent: :destroy
+  has_many :server_checks, dependent: :delete_all
 
   before_create :set_defaults
 

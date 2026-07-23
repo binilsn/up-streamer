@@ -48,6 +48,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :logs, only: [ :index, :show, :create ]
+      resources :server_checks, only: [ :index, :create ]
     end
   end
 end
