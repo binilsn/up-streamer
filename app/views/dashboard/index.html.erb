@@ -20,34 +20,43 @@
 </div>
 
 <!-- B. Analytical Metric Row (6 Cards) -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 auto-rows-fr gap-6 mb-6">
 
   <!-- Card 1: TOTAL_LOGS_24H -->
-  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
+  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6 flex flex-col h-full">
     <div class="flex justify-between items-start mb-4">
       <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">TOTAL_LOGS_24H</span>
       <span class="text-secondary-container material-symbols-outlined text-[20px]">monitoring</span>
     </div>
-    <div class="font-headline text-[32px] font-bold text-on-surface mb-2">4.2M</div>
-    <div class="flex items-center gap-1 font-body text-[12px] text-secondary-container mb-4">
-      <span class="material-symbols-outlined text-[16px]">trending_up</span>
-      <span>+12.4% vs last period</span>
+    <div class="flex-1">
+      <div class="font-headline text-[32px] font-bold text-on-surface mb-2" id="metric-total-logs"><%= number_to_human(@total_logs_24h, units: { thousand: 'K', million: 'M' }, precision: 1) %></div>
+      <div class="flex items-center gap-1 font-body text-[12px] <%= @total_logs_trend >= 0 ? 'text-secondary-container' : 'text-error' %> mb-4" id="metric-total-logs-trend">
+        <span class="material-symbols-outlined text-[16px]"><%= @total_logs_trend >= 0 ? 'trending_up' : 'trending_down' %></span>
+        <span><%= "+" if @total_logs_trend >= 0 %><%= @total_logs_trend %>% vs last period</span>
+      </div>
     </div>
-    <div class="h-[3px] bg-[#E2E8F0] w-full overflow-hidden rounded">
-      <div class="bg-secondary-container h-full w-[40%] rounded"></div>
+    <div class="h-10 flex items-end gap-[3px]">
+      <div class="bg-secondary-container/20 flex-1 h-[40%] rounded-sm"></div>
+      <div class="bg-secondary-container/40 flex-1 h-[55%] rounded-sm"></div>
+      <div class="bg-secondary-container/60 flex-1 h-[70%] rounded-sm"></div>
+      <div class="bg-secondary-container/80 flex-1 h-[85%] rounded-sm"></div>
+      <div class="bg-secondary-container flex-1 h-[65%] rounded-sm"></div>
+      <div class="bg-secondary-container/60 flex-1 h-[45%] rounded-sm"></div>
     </div>
   </div>
 
   <!-- Card 2: ERROR_RATE -->
-  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
+  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6 flex flex-col h-full">
     <div class="flex justify-between items-start mb-4">
       <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">ERROR_RATE</span>
       <span class="text-error material-symbols-outlined text-[20px]">warning</span>
     </div>
-    <div class="font-headline text-[32px] font-bold text-error mb-2">0.42%</div>
-    <div class="flex items-center gap-1 font-body text-[12px] text-error mb-4">
-      <span class="material-symbols-outlined text-[16px]">trending_up</span>
-      <span>+0.05% vs last period</span>
+    <div class="flex-1">
+      <div class="font-headline text-[32px] font-bold text-error mb-2">0.42%</div>
+      <div class="flex items-center gap-1 font-body text-[12px] text-error mb-4">
+        <span class="material-symbols-outlined text-[16px]">trending_up</span>
+        <span>+0.05% vs last period</span>
+      </div>
     </div>
     <div class="h-10 flex items-end gap-[3px]">
       <div class="bg-error/20 flex-1 h-[25%] rounded-sm"></div>
@@ -60,58 +69,69 @@
   </div>
 
   <!-- Card 3: INGESTION RATE (Live) -->
-  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
+  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6 flex flex-col h-full">
     <div class="flex justify-between items-start mb-4">
       <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">INGESTION RATE</span>
       <span class="text-secondary material-symbols-outlined text-[20px]">speed</span>
     </div>
-    <div class="flex items-baseline gap-1 mb-2">
-      <span class="font-headline text-[32px] font-bold text-on-surface" id="metric-ingestion-rate">0.0</span>
-      <span class="font-body text-[14px] font-medium text-on-surface-variant">KB/S</span>
+    <div class="flex-1">
+      <div class="flex items-baseline gap-1 mb-2">
+        <span class="font-headline text-[32px] font-bold text-on-surface" id="metric-ingestion-rate">0.0</span>
+        <span class="font-body text-[14px] font-medium text-on-surface-variant">KB/S</span>
+      </div>
+      <div class="flex items-center gap-1 font-body text-[12px] text-secondary mb-4">
+        <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+        <span id="metric-ingestion-rate-label">Streaming</span>
+      </div>
     </div>
-    <div class="flex items-center gap-1 font-body text-[12px] text-secondary mb-4">
-      <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
-      <span id="metric-ingestion-rate-label">Streaming</span>
-    </div>
-    <div class="h-[3px] bg-[#E2E8F0] w-full overflow-hidden rounded">
-      <div class="bg-secondary h-full w-[60%] rounded animate-pulse"></div>
+    <div class="h-10 flex items-end gap-[3px]">
+      <div class="bg-secondary/20 flex-1 h-[30%] rounded-sm"></div>
+      <div class="bg-secondary/20 flex-1 h-[45%] rounded-sm"></div>
+      <div class="bg-secondary/30 flex-1 h-[60%] rounded-sm"></div>
+      <div class="bg-secondary/50 flex-1 h-[80%] rounded-sm"></div>
+      <div class="bg-secondary/70 flex-1 h-[95%] rounded-sm"></div>
+      <div class="bg-secondary/90 flex-1 h-[70%] rounded-sm"></div>
     </div>
   </div>
 
   <!-- Card 4: EVENTS/SEC (Live) -->
-  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
+  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6 flex flex-col h-full">
     <div class="flex justify-between items-start mb-4">
       <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">EVENTS/SEC</span>
       <span class="text-secondary-container material-symbols-outlined text-[20px]">pulse</span>
     </div>
-    <div class="font-headline text-[32px] font-bold text-on-surface mb-2" id="metric-events-per-sec">0</div>
-    <div class="flex items-center gap-1 font-body text-[12px] text-secondary mb-4">
-      <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
-      <span>Real-time</span>
+    <div class="flex-1">
+      <div class="font-headline text-[32px] font-bold text-on-surface mb-2" id="metric-events-per-sec">0</div>
+      <div class="flex items-center gap-1 font-body text-[12px] text-secondary mb-4">
+        <span class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></span>
+        <span>Real-time</span>
+      </div>
     </div>
     <div class="h-10 flex items-end gap-[3px]">
-      <div class="bg-secondary-container/20 flex-1 h-[25%] rounded-sm" style="height: var(--bar1, 25%)"></div>
-      <div class="bg-secondary-container/20 flex-1 h-[35%] rounded-sm" style="height: var(--bar2, 35%)"></div>
-      <div class="bg-secondary-container/20 flex-1 h-[50%] rounded-sm" style="height: var(--bar3, 50%)"></div>
-      <div class="bg-secondary-container/40 flex-1 h-[65%] rounded-sm" style="height: var(--bar4, 65%)"></div>
-      <div class="bg-secondary-container/60 flex-1 h-[85%] rounded-sm" style="height: var(--bar5, 85%)"></div>
-      <div class="bg-secondary-container/80 flex-1 h-[70%] rounded-sm" style="height: var(--bar6, 70%)"></div>
+      <div class="bg-secondary-container/20 flex-1 h-[25%] rounded-sm"></div>
+      <div class="bg-secondary-container/20 flex-1 h-[35%] rounded-sm"></div>
+      <div class="bg-secondary-container/20 flex-1 h-[50%] rounded-sm"></div>
+      <div class="bg-secondary-container/40 flex-1 h-[65%] rounded-sm"></div>
+      <div class="bg-secondary-container/60 flex-1 h-[85%] rounded-sm"></div>
+      <div class="bg-secondary-container/80 flex-1 h-[70%] rounded-sm"></div>
     </div>
   </div>
 
   <!-- Card 5: ACTIVE_ALERTS -->
-  <%= link_to alerts_path, class: "block" do %>
-    <div class="bg-white border border-[#E2E8F0] rounded-lg p-6 hover:shadow-md transition-shadow">
+  <%= link_to alerts_path, class: "block h-full" do %>
+    <div class="bg-white border border-[#E2E8F0] rounded-lg p-6 hover:shadow-md transition-shadow flex flex-col h-full">
       <div class="flex justify-between items-start mb-4">
         <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">ACTIVE_ALERTS</span>
         <span class="text-on-surface material-symbols-outlined text-[20px]">notifications_active</span>
       </div>
-      <div class="font-headline text-[32px] font-bold text-on-surface mb-2" id="metric-active-alerts"><%= Alert.active.count %></div>
-      <div class="flex items-center gap-1 font-body text-[12px] text-on-surface-variant mb-4">
-        <span class="material-symbols-outlined text-[16px]">timer</span>
-        <span><%= time_ago_in_words(Alert.active.recent.first&.triggered_at || Time.current) %> ago</span>
+      <div class="flex-1">
+        <div class="font-headline text-[32px] font-bold text-on-surface mb-2" id="metric-active-alerts"><%= Alert.active.count %></div>
+        <div class="flex items-center gap-1 font-body text-[12px] text-on-surface-variant mb-4">
+          <span class="material-symbols-outlined text-[16px]">timer</span>
+          <span><%= time_ago_in_words(Alert.active.recent.first&.triggered_at || Time.current) %> ago</span>
+        </div>
       </div>
-      <div class="flex gap-1">
+      <div class="h-10 flex items-center gap-1">
         <% Alert.active.group(:severity).count.sort_by { |_, c| -c }.each do |sev, count| %>
           <% sev_color = case sev
              when "critical" then "bg-error text-white"
@@ -128,15 +148,17 @@
   <% end %>
 
   <!-- Card 6: SYS_LATENCY_P99 -->
-  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6">
+  <div class="bg-white border border-[#E2E8F0] rounded-lg p-6 flex flex-col h-full">
     <div class="flex justify-between items-start mb-4">
       <span class="font-body text-[12px] font-medium uppercase tracking-wider text-on-surface-variant">SYS_LATENCY_P99</span>
       <span class="text-secondary material-symbols-outlined text-[20px]">bolt</span>
     </div>
-    <div class="font-headline text-[32px] font-bold text-on-surface mb-2">42ms</div>
-    <div class="flex items-center gap-1 font-body text-[12px] text-secondary mb-4">
-      <span class="material-symbols-outlined text-[16px]">trending_down</span>
-      <span>-4ms vs baseline</span>
+    <div class="flex-1">
+      <div class="font-headline text-[32px] font-bold text-on-surface mb-2">42ms</div>
+      <div class="flex items-center gap-1 font-body text-[12px] text-secondary mb-4">
+        <span class="material-symbols-outlined text-[16px]">trending_down</span>
+        <span>-4ms vs baseline</span>
+      </div>
     </div>
     <div class="h-10 flex items-end gap-[3px]">
       <div class="flex-1 bg-secondary/30 h-[45%] rounded-sm"></div>
